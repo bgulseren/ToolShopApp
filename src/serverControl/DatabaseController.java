@@ -20,7 +20,9 @@ public class DatabaseController {
 	public String[][] extractTable(String tableName) {
 		String[][] tableContent;
 		tableContent = db.extractTable(tableName);
-		return tableContent;		
+		
+		System.out.println("Extracted db table: " + tableName);
+		return tableContent;
 	}
 	
 	//add new row to a table

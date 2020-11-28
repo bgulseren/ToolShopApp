@@ -21,14 +21,20 @@ public class ClientController {
 	private Socket aSocket;
 	private ObjectOutputStream socketOut;
 	private ObjectInputStream socketIn;
-	private ClientModel model;
+	private MainController mainCtr;
+	
+	private String serverName;
+	private int portNumber;
 	
 	/**
 	 * Default constructor
 	 * @throws IOException 
 	 */
-	public ClientController () throws IOException {
-		model = null;
+	public ClientController (MainController mainCtr) throws IOException {
+		serverName = "localhost";
+		portNumber = 9898;
+		
+		this.mainCtr = mainCtr;
 		socketOut = null;
 		socketIn = null;
 		aSocket = null;
@@ -36,10 +42,9 @@ public class ClientController {
 	
 	/**
 	 * Starts the connection with the server
-	 * @param serverName ip address of the server
-	 * @param portNumber portnumber to connect
 	 */
-	public void connect (String serverName, int portNumber) {
+	public void connect () {
+		
 		try {
             // establish socket connection to server
 			aSocket = new Socket (serverName, portNumber);
@@ -54,116 +59,108 @@ public class ClientController {
 			e.printStackTrace();
 		}
 	}
-	
-	
-	/**
-	 * Starts the communication with the server
-	 * @throws ClassNotFoundException 
-	 * @throws IOException 
-	 */
-	public void communicate () throws ClassNotFoundException, IOException {
-		boolean finished = false;
 
+
+	public void getInventoryFromSrv() throws IOException, ClassNotFoundException {
+		connect();
+		
 		// sending command to server
 		String messageOut = "UPDATE%";
 		socketOut.writeObject(messageOut);
-        
-		// receiving the inventory model from server
-        Inventory inv = (Inventory) socketIn.readObject();
-        
-        // constructing the client side model
-        this.model = new ClientModel(inv);
-        this.model.setClient(this);
-        
-		while (!finished) {
-			String invViewReq = model.getInvView().getRequest();
-			
-			String itemType = model.getInvView().itemType;
-			String itemName = model.getInvView().itemName;
-			int itemId = model.getInvView().itemId;
-			double itemPrice = model.getInvView().itemPrice;
-			int itemQty = model.getInvView().itemQty;
-			int itemSupplierId = model.getInvView().itemSupplierId;
-			int itemPower = model.getInvView().itemPower;
-			
-			if (invViewReq.contentEquals("UPDATE") ) {
-				messageOut = "UPDATE%";
-				socketOut.writeObject(messageOut);
-		        
-				// receiving the inventory model from server
-		        inv = (Inventory) socketIn.readObject();
-		        
-		        // constructing the client side model
-		        this.model.setInventory(inv);
-		        this.model.getInvView().updateView();
-		        
-			} else if (invViewReq.contentEquals("SEARCHBYNAME") ) {
-				messageOut = "SEARCHBYNAME" + "%" + itemName;
-				socketOut.writeObject(messageOut);
-		        
-				// receiving the inventory model from server
-		        inv = (Inventory) socketIn.readObject();
-		        
-		        // constructing the client side model
-		        this.model.setInventory(inv);
-		        this.model.getInvView().updateView();
-		        
-			} else if (invViewReq.contentEquals("SEARCHBYID") ) {
-				messageOut = "SEARCHBYID" + "%" + itemId;
-				socketOut.writeObject(messageOut);
-		        
-				// receiving the inventory model from server
-		        inv = (Inventory) socketIn.readObject();
-		        
-		        // constructing the client side model
-		        this.model.setInventory(inv);
-		        this.model.getInvView().updateView();
-		        
-			} else if (invViewReq.contentEquals("ADDITEM") ) {
-				messageOut = 	"ADDITEM" + "%" +
-								itemType + "%" +
-								itemId + "%" +
-								itemName + "%" +
-								itemQty + "%" +
-								itemPrice + "%" +
-								itemSupplierId + "%" +
-								itemPower;
-				
-				socketOut.writeObject(messageOut);
-		        
-				// receiving the inventory model from server
-		        inv = (Inventory) socketIn.readObject();
-		        
-		        // constructing the client side model
-		        this.model.setInventory(inv);
-		        this.model.getInvView().updateView();
-		        
-			}  else if (invViewReq.contentEquals("REDUCEITEM") ) {
-				
-				messageOut = "REDUCEITEM" + "%" + itemId + "%" + itemQty;
-		
-				socketOut.writeObject(messageOut);
-		        
-				// receiving the inventory model from server
-		        inv = (Inventory) socketIn.readObject();
-		        
-		        // constructing the client side model
-		        this.model.setInventory(inv);
-		        this.model.getInvView().updateView();
-			}
-			
-            try {
-				Thread.sleep(100);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-			
-		}
-			
-		//close resources
-		closeSocket();
-		
+		readInventoryFromSrv();
 	}
+	
+	
+	public void searchItemByNameFromSrv () throws ClassNotFoundException, IOException {
+		connect();
+		
+		String itemName = mainCtr.getInvView().itemName;
+		
+		String messageOut = "SEARCHBYNAME" + "%" + itemName;
+		socketOut.writeObject(messageOut);
+		readInventoryFromSrv();
+	}
+	
+	public void searchItemByIdFromSrv () throws ClassNotFoundException, IOException {
+		connect();
+		
+		int itemId = mainCtr.getInvView().itemId;
+		
+		String messageOut = "SEARCHBYID" + "%" + itemId;
+		socketOut.writeObject(messageOut);
+		readInventoryFromSrv();
+	}
+	
+	public void reduceItemFromSrv () throws ClassNotFoundException, IOException {
+		connect();
+		
+		int itemId = mainCtr.getInvView().itemId;
+		int itemQty = mainCtr.getInvView().itemQty;
+		
+		String messageOut = "REDUCEITEM" + "%" + itemId + "%" + itemQty;
+		socketOut.writeObject(messageOut);
+		readInventoryFromSrv();
+	}
+	
+	public void addItemFromSrv () throws ClassNotFoundException, IOException {
+		connect();
+		
+		String itemType = mainCtr.getInvView().itemType;
+		String itemName = mainCtr.getInvView().itemName;
+		int itemId = mainCtr.getInvView().itemId;
+		double itemPrice = mainCtr.getInvView().itemPrice;
+		int itemQty = mainCtr.getInvView().itemQty;
+		int itemSupplierId = mainCtr.getInvView().itemSupplierId;
+		int itemPower = mainCtr.getInvView().itemPower;
+		
+		String messageOut = "ADDITEM" + "%" +
+				itemType + "%" +
+				itemId + "%" +
+				itemName + "%" +
+				itemQty + "%" +
+				itemPrice + "%" +
+				itemSupplierId + "%" +
+				itemPower;
+
+		socketOut.writeObject(messageOut);
+		readInventoryFromSrv();
+	}
+	
+	private void readInventoryFromSrv() throws ClassNotFoundException, IOException {
+		// receiving the new inventory model from server
+        Inventory inv = (Inventory) socketIn.readObject();
+        this.mainCtr.setInventory(inv);
+        
+        System.out.println("Received new Inventory from server");
+        
+        System.out.println(inv);
+		//closeSocket(); //close resources
+	}
+
+        
+//		while (!finished) {
+//			String invViewReq = mainCtr.getInvView().getRequest();
+//			
+//			
+//			if (invViewReq.contentEquals("UPDATE") ) {
+//
+//		        
+//			} else if (invViewReq.contentEquals("SEARCHBYNAME") ) {
+//
+//		        
+//			} else if (invViewReq.contentEquals("SEARCHBYID") ) {
+//
+//		        
+//			} else if (invViewReq.contentEquals("ADDITEM") ) {
+//
+//		    
+//			}  else if (invViewReq.contentEquals("REDUCEITEM") ) {
+//				
+//			}
+//			
+//			
+//		}
+		
 	
 	/**
 	 * Closes all the sockets when app terminates
@@ -179,22 +176,5 @@ public class ClientController {
 		
 	}
 	
-	
-	
-	/**
-	 * Main
-	 * @throws ClassNotFoundException
-	 */
-	public static void main (String [] args) throws IOException, ClassNotFoundException {
-		System.out.println("Press ENTER to connect to the tool shop.");
-		
-		BufferedReader stdin = new BufferedReader(new InputStreamReader(System.in));
-		stdin.readLine();
-		
-		ClientController aClient = new ClientController();
-		aClient.connect("localhost", 9898);
-
-		aClient.communicate();
-	}
 
 }

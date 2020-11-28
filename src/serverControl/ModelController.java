@@ -47,6 +47,11 @@ public class ModelController implements Runnable {
 	public void loadSuppliersTable() {
 		String[][] suppliersTable = dbControl.extractTable("suppliertable");
 		
+		if (suppliersTable == null) {
+			System.out.println("No suppliers found in db");
+			return;
+		}
+		
 		for (int i = 0; i < suppliersTable.length; i++) {
 			int id = Integer.parseInt(suppliersTable[i][0]);
 			String type = suppliersTable[i][1];
@@ -63,15 +68,20 @@ public class ModelController implements Runnable {
 	public void loadItemsTable() {
 		String[][] itemsTable = dbControl.extractTable("tooltable");
 		
+		if (itemsTable == null) {
+			System.out.println("No items found in db");
+			return;
+		}
+		
 		for (int i = 0; i < itemsTable.length; i++) {
 			
 			int itemId = Integer.parseInt(itemsTable[i][0]);
 			String itemName = itemsTable[i][1];
 			int itemQty = Integer.parseInt(itemsTable[i][2]);
 			double itemPrice = Double.parseDouble(itemsTable[i][3]);
-			int itemSupId = Integer.parseInt(itemsTable[i][4]);
-			String itemType = itemsTable[i][5];
-			int itemPower = Integer.parseInt(itemsTable[i][6]);
+			String itemType = itemsTable[i][4];
+			int itemPower = Integer.parseInt(itemsTable[i][5]);
+			int itemSupId = Integer.parseInt(itemsTable[i][6]);
 			
 			this.inventory.addItem(itemType, itemId, itemName, itemQty, itemPrice, itemSupId, itemPower);
 		}
@@ -79,6 +89,11 @@ public class ModelController implements Runnable {
 	
 	public void loadOrderTable() {
 		String[][] ordersTable = dbControl.extractTable("orderlinetable");
+		
+		if (ordersTable == null) {
+			System.out.println("No orderlines found in db");
+			return;
+		}
 		
 		//now check orderlines to be associated to item
 		for (int i = 0; i < ordersTable.length; i++) {

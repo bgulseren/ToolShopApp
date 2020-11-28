@@ -16,7 +16,6 @@ import java.io.*;
 
 public class ServerController {
 
-
 	private ExecutorService pool;
 	
 	private ServerSocket serverSocket;
@@ -51,7 +50,7 @@ public class ServerController {
 		if (cliSocket.isConnected()) {
 			socketIn = new ObjectInputStream(cliSocket.getInputStream());
 			socketOut = new ObjectOutputStream (cliSocket.getOutputStream());
-			model = new ModelController();
+			model = new ModelController(); //todo: maybe construct new each time client connects with UPDATE
 			model.setSrvControl(this);
 			System.out.println("Server: a new client is connected");
 		}
@@ -62,7 +61,8 @@ public class ServerController {
 			
 				/*============== UPDATE ==============*/
 			if (message.contains("UPDATE%")) {
-				//todo: maybe update inv on server side from db first?
+
+				model.getNewInventory();
 				socketOut.writeObject(this.model.getInventory());
 			
 				/*============== SEARCHBYNAME ==============*/
@@ -70,6 +70,7 @@ public class ServerController {
 				message.replace("SEARCHBYNAME%", ""); //remove message header
 				
 				//get result from inventory
+				model.getNewInventory();
 				this.model.getInventory().searchItem(message);
 				
 				//send back the updated inventory to the client
@@ -80,6 +81,7 @@ public class ServerController {
 				message.replace("SEARCHBYID%", ""); //remove message header
 				
 				//get result from inventory
+				model.getNewInventory();
 				this.model.getInventory().searchItem(Integer.parseInt(message));
 				
 				//send back the updated inventory to the client
@@ -101,6 +103,7 @@ public class ServerController {
 				int itemPower = Integer.parseInt(itemInfo[6]);
 				
 				//pass item to the inventory
+				model.getNewInventory();
 				this.model.getInventory().addItem(itemType, itemId, itemName, itemQty, itemPrice, itemSupId, itemPower);
 				
 				//send back the updated inventory to the client
@@ -116,6 +119,7 @@ public class ServerController {
 				int itemQty = Integer.parseInt(itemInfo[1]);
 				
 				//pass item to the inventory
+				model.getNewInventory();
 				this.model.getInventory().reduceItem(itemId, itemQty);
 				
 				//send back the updated inventory to the client

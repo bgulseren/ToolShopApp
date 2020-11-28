@@ -9,7 +9,6 @@ import javax.swing.SwingConstants;
 import javax.swing.JPanel;
 import javax.swing.border.TitledBorder;
 
-import client.ClientModel;
 import client.InvViewController;
 import client.InvViewListener;
 
