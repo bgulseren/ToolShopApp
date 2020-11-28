@@ -17,8 +17,8 @@ public class InvViewListener implements ActionListener{
 	String[] columnNames = {"ID", "Name", "Quantity", "Price", "Type", "Power", "SupplierID"};
 	
 	public InvViewListener(InventoryView pView) {
-		ivCtr = new InvViewController();
-		iv = pView;
+		this.iv = pView;
+		this.ivCtr = iv.getIvCtr();
 	}
 	
 	@Override
@@ -33,7 +33,7 @@ public class InvViewListener implements ActionListener{
 			decreaseToolQuantity();
 		}
 		else if(e.getSource() == iv.getDisplayOrderButton()) {
-			displayOrder();
+			//displayOrder();
 		}
 	}
 	
@@ -43,29 +43,25 @@ public class InvViewListener implements ActionListener{
 	 */
 	public void searchTools(String searchText) {	
 		if(iv.getSearchToolNameButton().isSelected()) {
-			ivCtr.searchTool(searchText, "SEARCHBYNAME");
-			iv.getResultsTable().setModel(new DefaultTableModel(ivCtr.getSearchResult(), columnNames));
+			ivCtr.searchItem(searchText);
+			//iv.getResultsTable().setModel(new DefaultTableModel(ivCtr.getSearchResult(), columnNames));
 		}
 		else if(iv.getSearchToolIdButton().isSelected()) {
-			ivCtr.searchTool(searchText, "SEARCHBYNAME");
-			iv.getResultsTable().setModel(new DefaultTableModel(ivCtr.getSearchResult(), columnNames));
+			ivCtr.searchItem(Integer.parseInt(searchText));
+			//iv.getResultsTable().setModel(new DefaultTableModel(ivCtr.getSearchResult(), columnNames));
 		}
 	}
 	
-	
 	public void displayAllTools() {
-		ivCtr.displayAllTools();
+		ivCtr.update();
 	}
 	
 	public void decreaseToolQuantity() {
 		int row = iv.getResultsTable().getSelectedRow();
 		String selectedID = iv.getResultsTable().getModel().getValueAt(row,0).toString();
-		ivCtr.decreaseQuantity(selectedID);
+		ivCtr.reduceItem(Integer.parseInt(selectedID), 1);
 	}
 	
-	public void displayOrder() {
-		ivCtr.displayOrder();
-	}
 	
 }
 

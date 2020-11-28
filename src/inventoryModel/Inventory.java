@@ -9,7 +9,6 @@ package inventoryModel;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-import serverControl.ModelController;
 
 public class Inventory implements Serializable {
 	
@@ -30,7 +29,7 @@ public class Inventory implements Serializable {
 	/** the selected item (ie result of a search)*/
 	private Item selectedItem;
 	
-	private ModelController model;
+	//private ModelController model;
 	
 	/**
 	 * Default Inventory Class Constructor
@@ -168,28 +167,14 @@ public class Inventory implements Serializable {
 	 * @param itemId id number of the item to reduce.
 	 * @param itemQty quantity to reduce from the item.
 	 */
-	public void reduceItem(int itemId, int itemQty) {
+	public Item reduceItem(int itemId, int itemQty) {
 		Item foundItem = this.searchItem(itemId);
 		
 		if (foundItem != null) {
-			boolean isNewOrderLine = foundItem.reduceQty(itemQty); //reduce item quantity and check resulting orderline flag
-			
-			//update item on the db
-			model.getDb().updateQuant("tooltable", foundItem.getId(), foundItem.getQty());
-			
-			//check if a resulting orderline is present, if so add it to db
-			if (isNewOrderLine) {
-				
-				String[] newRow = new String[4];
-				
-				newRow[0] = Integer.toString(foundItem.getOrderLine().getId());
-				newRow[1] = Integer.toString(foundItem.getOrderLine().getQty());
-				newRow[2] = foundItem.getOrderLine().getName();
-				newRow[3] = Integer.toString(foundItem.getOrderLine().getSupplierId());
-				
-				model.getDb().addRow("orderlinetable", newRow);
-			}
+			foundItem.reduceQty(itemQty); //reduce item quantity 
 		}
+		
+		return foundItem;
 	}
 	
 	/**
@@ -215,14 +200,6 @@ public class Inventory implements Serializable {
 		return this.order;
 	}
 	
-	
-	public void setController(ModelController model) {
-		this.model = model;
-	}
-	
-	public ModelController getController() {
-		return model;
-	}
 	
 	/**
 	 * Outputs a string representation of this inventory.

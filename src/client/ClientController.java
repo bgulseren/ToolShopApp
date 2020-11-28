@@ -65,7 +65,7 @@ public class ClientController {
 		boolean finished = false;
 
 		// sending command to server
-		String messageOut = "UPDATE";
+		String messageOut = "UPDATE%";
 		socketOut.writeObject(messageOut);
         
 		// receiving the inventory model from server
@@ -77,6 +77,7 @@ public class ClientController {
         
 		while (!finished) {
 			String invViewReq = model.getInvView().getRequest();
+			
 			String itemType = model.getInvView().itemType;
 			String itemName = model.getInvView().itemName;
 			int itemId = model.getInvView().itemId;

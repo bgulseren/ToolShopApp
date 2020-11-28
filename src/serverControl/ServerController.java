@@ -6,9 +6,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.io.*;
 
-import inventoryModel.Inventory;
-import inventoryModel.Item;
-
 
 /**
  * Implementation of the Server Controller
@@ -18,6 +15,7 @@ import inventoryModel.Item;
 
 
 public class ServerController {
+
 
 	private ExecutorService pool;
 	
@@ -62,10 +60,12 @@ public class ServerController {
 		while (true) {
 			String message = (String) socketIn.readObject();
 			
+				/*============== UPDATE ==============*/
 			if (message.contains("UPDATE%")) {
 				//todo: maybe update inv on server side from db first?
 				socketOut.writeObject(this.model.getInventory());
-				
+			
+				/*============== SEARCHBYNAME ==============*/
 			} else if (message.contains("SEARCHBYNAME%")) {
 				message.replace("SEARCHBYNAME%", ""); //remove message header
 				
@@ -75,6 +75,7 @@ public class ServerController {
 				//send back the updated inventory to the client
 				socketOut.writeObject(this.model.getInventory());
 				
+				/*============== SEARCHBYID ==============*/
 			} else if (message.contains("SEARCHBYID%")) {
 				message.replace("SEARCHBYID%", ""); //remove message header
 				
@@ -84,6 +85,7 @@ public class ServerController {
 				//send back the updated inventory to the client
 				socketOut.writeObject(this.model.getInventory());
 				
+				/*============== ADDITEM ==============*/
 			} else if (message.contains("ADDITEM%")) {
 				message.replace("ADDITEM%", ""); //remove message header
 				
@@ -103,7 +105,8 @@ public class ServerController {
 				
 				//send back the updated inventory to the client
 				socketOut.writeObject(this.model.getInventory());
-				
+			
+				/*============== REDUCEITEM ==============*/
 			} else if (message.contains("REDUCEITEM%")) {
 				message.replace("REDUCEITEM%", ""); //remove message header
 				
@@ -118,6 +121,7 @@ public class ServerController {
 				//send back the updated inventory to the client
 				socketOut.writeObject(this.model.getInventory());
 				
+				/*============== EXIT ==============*/
 			} else if (message.contains("EXIT%")) {
 				cliSocket.close();
 				break;

@@ -1,14 +1,11 @@
 package serverControl;
 
-//import java.sql.Connection;
-//import java.sql.DriverManager;
-//import java.sql.PreparedStatement;
-//import java.sql.ResultSet;
 import java.sql.SQLException;
+
 import database.Database;
 
 public class DatabaseController {
-	
+
 	//reference to Database entity 
 	private Database db;
 	

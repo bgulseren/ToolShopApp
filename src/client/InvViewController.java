@@ -1,8 +1,11 @@
 package client;
 
+import views.InventoryView;
+
 public class InvViewController {
 	
 	private ClientModel model;
+	private InventoryView invGui;
 	
 	public String itemType;
 	public String itemName;
@@ -16,6 +19,8 @@ public class InvViewController {
 	
 	public InvViewController(ClientModel model) {
 		this.model = model;
+		this.invGui = new InventoryView(this);
+
 		request = "NONE";
 	}
 	
@@ -52,10 +57,15 @@ public class InvViewController {
 		request = "ADD";
 	}
 	
-	public void removeItem(int itemId, int itemQty) {
+	public void reduceItem(int itemId, int itemQty) {
 		this.itemId = itemId;
 		this.itemQty = itemQty;
 		request = "REDUCE";
+	}
+	
+	public void deleteItem(int itemId) {
+		this.itemId = itemId;
+		request = "DELETE";
 	}
 	
 	public String getRequest() {
@@ -70,7 +80,7 @@ public class InvViewController {
 	
 	public void updateView() {
 		
-		itemName = this.model.getInventory().getSelectedItem().getName();
+		//itemName = this.model.getInventory().getSelectedItem().getName();
 		//method to update inform the gui that it can use the new values to populate stuff
 	}
 

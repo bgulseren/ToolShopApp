@@ -30,7 +30,7 @@ public class Database {
 	
 	public void connectDB() {
 		try {
-			Class.forName("com.mysql.jdbc.Driver");
+			Class.forName("com.mysql.cj.jdbc.Driver");
 			jdbc_connection = DriverManager.getConnection(connectionInfo, login, password);
 			System.out.println("Connected to: " + connectionInfo + "\n");
 		}catch(SQLException e) {

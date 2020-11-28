@@ -1,19 +1,16 @@
 package serverControl;
 
-import java.io.Serializable;
-
 import inventoryModel.*;
 
-public class ModelController implements Runnable, Serializable {
+public class ModelController implements Runnable {
 	
-	private static final long serialVersionUID = 1L;
 	private Inventory inventory;
 	private DatabaseController dbControl;
 	private ServerController srvControl;
 	
 	public ModelController() {
+		this.dbControl = new DatabaseController("inventorydb");
 		this.inventory = new Inventory();
-		this.inventory.setController(this);
 	}
 	
 	public void setSrvControl(ServerController srvControl) {
@@ -39,11 +36,10 @@ public class ModelController implements Runnable, Serializable {
 	public void getNewInventory() {
 		
 		this.inventory = new Inventory();
-		this.inventory.setController(this);
 		
-		loadSuppliersTable(); // First get the suppliers table
-		loadItemsTable(); // Get items table
-		loadOrderTable();
+		loadSuppliersTable(); // Get the suppliers table from db into model
+		loadItemsTable(); // Get items table from db into model
+		loadOrderTable(); // Get orderlines table from db into model
 		
 	}
 	
@@ -154,7 +150,24 @@ public class ModelController implements Runnable, Serializable {
 		getNewInventory(); //get latest inventory info from db into model
 		
 		//this has to go thru inventory to trigger the orderline logic.
-		inventory.reduceItem(itemId, itemQty);
+		Item item = inventory.reduceItem(itemId, itemQty);
+		
+		if (item != null) {
+			getDb().updateQuant("tooltable", item.getId(), item.getQty());
+			
+			if (item.getOrderLine() != null) {
+				String[] newRow = new String[4];
+				
+				newRow[0] = Integer.toString(item.getOrderLine().getId());
+				newRow[1] = Integer.toString(item.getOrderLine().getQty());
+				newRow[2] = item.getOrderLine().getName();
+				newRow[3] = Integer.toString(item.getOrderLine().getSupplierId());
+				
+				getDb().addRow("orderlinetable", newRow);
+			}
+		}
+		//update item on the db
+		
 		
 		getNewInventory(); //get latest inventory info from db into model
 	}
@@ -163,9 +176,7 @@ public class ModelController implements Runnable, Serializable {
 	@Override
 	public void run() {
 		
-		inventory.addItem("electric", 0, "rasprberry pi", 5, 10, 0, 220);
-		inventory.addItem("nonelectric", 1, "hammer and nail", 3, 12, 1, 2202);
-	//	this.dbControl = new DatabaseController();
+
 	}
 	
 	
