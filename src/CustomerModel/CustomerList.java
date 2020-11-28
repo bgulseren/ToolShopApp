@@ -1,10 +1,15 @@
 package customerModel;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class CustomerList {
+public class CustomerList implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private ArrayList<Customer> customerList;
 	private String[][] searchResult;
 	
@@ -34,12 +39,12 @@ public class CustomerList {
 		for(int r = 0; r < rows; r++) {
 			Customer newCustomer = null;
 			int ID = Integer.parseInt(customerListFromDB[r][0]);
-			String fName = customerListFromDB[r][1];
-			String lName = customerListFromDB[r][2];
-			String address = customerListFromDB[r][3];
-			String postalCode = customerListFromDB[r][4];
-			String phoneNo = customerListFromDB[r][5];
-			String type = customerListFromDB[r][6];
+			String type = customerListFromDB[r][1];
+			String fName = customerListFromDB[r][2];
+			String lName = customerListFromDB[r][3];
+			String address = customerListFromDB[r][4];
+			String postalCode = customerListFromDB[r][5];
+			String phoneNo = customerListFromDB[r][6];
 			
 			if(type.contentEquals("R"))
 				newCustomer = new ResidentialCustomer(ID,fName,lName,address,postalCode,phoneNo,type);
@@ -154,37 +159,13 @@ public class CustomerList {
 		return searchResult;
 	}
 	
-	
-	
-//	public String[][] getCustomerList() {
-//		return customerList;
-//	}
-//
-//	public void setCustomerList(String[][] customerList) {
-//		this.customerList = customerList;
-//	}
-//
-//
-//	public String[][] getSearchResult() {
-//		return searchResult;
-//	}
-//
-//
-//	public void setSearchResult(String[][] searchResult) {
-//		this.searchResult = searchResult;
-//	}
-	
-	public static void main(String[] args) {
-		String[][] databaseQuery = {
-				{"1001", "John", "Bones", "123 Long St Calgary", "T2M1H8", "403-234-9987", "R"},
-				{"1002", "Ahmed", "Zaki", "456 Short St Calgary", "T2M1A4", "403-827-1231", "C"},
-				{"1003", "Omar", "Zaki", "456 Short St Calgary", "T2M1A4", "403-827-8837", "C"}
-			};
-		CustomerList app = new CustomerList(databaseQuery);
-		app.searchByName("Bones");
-		app.searchByID("1002");
-		app.searchByType("C");
-		
+	@Override
+	public String toString() {
+		String outString = new String();
+		for (int i = 0; i < customerList.size(); i++) {
+			outString = outString + customerList.get(i).toString() + "\n";
+		}
+		return outString;
 	}
 	
 }

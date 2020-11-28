@@ -57,6 +57,9 @@ public class ServerController {
 				model.setSocketIn(socketIn);
 				model.setSocketOut(socketOut);
 				System.out.println("Server: a new client is connected");
+			} else {
+				cliSocket.close(); //todo: not sure about this
+				System.out.println("Server: a client socket is closed");
 			}
 			
 			pool.execute(model);

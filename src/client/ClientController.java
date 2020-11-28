@@ -7,6 +7,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
+import customerModel.CustomerList;
 import inventoryModel.*;
 
 /**
@@ -61,11 +62,14 @@ public class ClientController {
 	}
 
 
+	// ==================================================================== //
+	//							INVENTORY QUERIES							//
+	// ==================================================================== //
 	public void getInventoryFromSrv() throws IOException, ClassNotFoundException {
 		connect();
 		
 		// sending command to server
-		String messageOut = "UPDATE%";
+		String messageOut = "UPDATEITEMS%";
 		socketOut.writeObject(messageOut);
 		readInventoryFromSrv();
 	}
@@ -135,6 +139,66 @@ public class ClientController {
         
 		disconnect();
 	}
+	
+	// ==================================================================== //
+	//							CUSTOMER QUERIES							//
+	// ==================================================================== //
+	
+	public void getCustomersFromSrv() throws IOException, ClassNotFoundException {
+		connect();
+		
+		// sending command to server
+		String messageOut = "UPDATECUSTOMERS%";
+		socketOut.writeObject(messageOut);
+		readCustomersFromSrv();
+	}
+	
+	public void editCustomerFromSrv () throws ClassNotFoundException, IOException {
+		connect();
+		
+		String id = mainCtr.getCusView().getId();
+		String type = mainCtr.getCusView().getType();
+		String fName = mainCtr.getCusView().getfName();
+		String lName = mainCtr.getCusView().getlName();
+		String addr = mainCtr.getCusView().getAddress();
+		String pCode = mainCtr.getCusView().getPostalCode();
+		String phone = mainCtr.getCusView().getPhoneNo();
+		
+		String messageOut = "EDITCUSTOMER" + "%" +
+							id + "%" +
+							type + "%" +
+							fName + "%" +
+							lName + "%" +
+							addr + "%" +
+							pCode + "%" +
+							phone;
+		
+		socketOut.writeObject(messageOut);
+		readCustomersFromSrv();
+	}
+	
+	public void deleteCustomerFromSrv () throws ClassNotFoundException, IOException {
+		connect();
+		
+		String customerId = mainCtr.getCusView().getId();
+		
+		String messageOut = "DELETECUSTOMER" + "%" + customerId;
+		socketOut.writeObject(messageOut);
+		readCustomersFromSrv();
+	}
+	
+	
+	private void readCustomersFromSrv() throws ClassNotFoundException, IOException {
+		// receiving the new customers model from server
+		CustomerList customers = (CustomerList) socketIn.readObject();
+        this.mainCtr.setCustomerList(customers);
+        
+        System.out.println("Received new customers from server");
+        
+		disconnect();
+	}
+	
+	
 
         
 //		while (!finished) {

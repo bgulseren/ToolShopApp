@@ -5,11 +5,14 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
+import customerModel.CustomerList;
 import inventoryModel.*;
 
 public class ModelController implements Runnable {
 	
 	private Inventory inventory;
+	private CustomerList customerList;
+	
 	private DatabaseController dbControl;
 	private ServerController srvControl;
 	private ObjectOutputStream socketOut;
@@ -18,7 +21,8 @@ public class ModelController implements Runnable {
 	
 	public ModelController() {
 		this.dbControl = new DatabaseController("inventorydb");
-		this.inventory = new Inventory();
+		this.inventory = null; //new Inventory();
+		this.customerList = null;
 		socketIn = null;
 		socketOut = null;
 	}
@@ -31,15 +35,21 @@ public class ModelController implements Runnable {
 		return inventory;
 	}
 	
+	public CustomerList getCustomerList() {
+		return customerList;
+	}
+	
 	public ServerController getSrvControl() {
 		return srvControl;
 	}
-	
 	
 	public DatabaseController getDb() {
 		return dbControl;
 	}
 	
+	// ==================================================================== //
+	//							INVENTORY									//
+	// ==================================================================== //
 	/**
 	 * updates the inventory from db (sets)
 	 */
@@ -50,9 +60,7 @@ public class ModelController implements Runnable {
 		loadSuppliersTable(); // Get the suppliers table from db into model
 		loadItemsTable(); // Get items table from db into model
 		loadOrderTable(); // Get orderlines table from db into model
-		
 	}
-	
 	
 	public void loadSuppliersTable() {
 		String[][] suppliersTable = dbControl.extractTable("suppliertable");
@@ -157,11 +165,34 @@ public class ModelController implements Runnable {
 		return result;
 	}
 	
+	public int deleteCustomer(int customerId) {
+		
+		int result = dbControl.deleteRow("customertable", customerId);
+		getNewCustomerList(); //get updated customers list
+		return result;
+	}
+	
 	public int updateItem(String itemType, int itemId, String itemName, int itemQty, double itemPrice, int itemSupId, int itemPower) {
 		
 		int result = dbControl.updateToolRow(itemId, itemName, itemQty, itemPrice, itemType, itemPower);
 		getNewInventory(); //get updated inventory
 		return result;
+	}
+	
+	public int updateCustomer(String[] customerInfo) {
+		
+		int id = Integer.parseInt(customerInfo[0]);
+		String cType = customerInfo[1];
+		String fName = customerInfo[2];
+		String lName = customerInfo[3];
+		String address = customerInfo[4];
+		String postalCode = customerInfo[5];
+		String phoneNo = customerInfo[6];
+		
+		int result = dbControl.updateCustomerRow(id, fName, lName, address, postalCode, phoneNo, cType);
+		getNewCustomerList(); //get updated customers list
+		return result;
+		
 	}
 	
 	/**
@@ -197,6 +228,29 @@ public class ModelController implements Runnable {
 		getNewInventory(); //get latest inventory info from db into model
 	}
 	
+	
+	// ==================================================================== //
+	//							CUSTOMERS									//
+	// ==================================================================== //
+	
+	/**
+	 * gets the customers table from db into model
+	 */
+	public void getNewCustomerList() {
+		// Get the customers table from db into model
+		String[][] customersTable = dbControl.extractTable("customertable");
+		
+		if (customersTable == null) {
+			System.out.println("No customers found in db");
+			return;
+		}
+		
+		this.customerList = new CustomerList(customersTable);
+	}
+	
+	// ==================================================================== //
+	//							CONNECTIONS									//
+	// ==================================================================== //
 	public void setSocketIn(ObjectInputStream socketIn) {
 		this.socketIn = socketIn;
 	}
@@ -226,7 +280,7 @@ public class ModelController implements Runnable {
 			}
 			
 				/*============== UPDATE ==============*/
-			if (message.contains("UPDATE%")) {
+			if (message.contains("UPDATEITEMS%")) {
 
 				getNewInventory();
 				try {
@@ -283,9 +337,8 @@ public class ModelController implements Runnable {
 				int itemSupId = Integer.parseInt(itemInfo[5]);
 				int itemPower = Integer.parseInt(itemInfo[6]);
 				
-				//pass item to the inventory
-				getNewInventory();
-				getInventory().addItem(itemType, itemId, itemName, itemQty, itemPrice, itemSupId, itemPower);
+				// add item to the db
+				addItem(itemType, itemId, itemName, itemQty, itemPrice, itemSupId, itemPower);
 				
 				//send back the updated inventory to the client
 				try {
@@ -304,13 +357,51 @@ public class ModelController implements Runnable {
 				int itemId = Integer.parseInt(itemInfo[0]);
 				int itemQty = Integer.parseInt(itemInfo[1]);
 				
-				//pass item to the inventory
-				getNewInventory();
-				getInventory().reduceItem(itemId, itemQty);
+				// reduce item from db
+				reduceItem(itemId, itemQty);
 				
 				//send back the updated inventory to the client
 				try {
 					socketOut.writeObject(getInventory());
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				/*============== GET NEW CUSTOMERS LIST ==============*/
+			} else if (message.contains("UPDATECUSTOMERS%")) {
+				getNewCustomerList();
+				try {
+					socketOut.writeObject(getCustomerList());
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				/*============== EDIT CUSTOMER ==============*/
+			} else if (message.contains("EDITCUSTOMER%")) {
+				message.replace("EDITCUSTOMER%", ""); //remove message header
+				
+				//parse incoming message to customer related info
+				String[] customerInfo = message.split("%");
+				
+				updateCustomer(customerInfo);
+				
+				try {
+					socketOut.writeObject(getCustomerList());
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				/*============== DELETE CUSTOMER ==============*/
+			} else if (message.contains("DELETECUSTOMER%")) {
+				message.replace("DELETECUSTOMER%", ""); //remove message header
+				
+				deleteCustomer(Integer.parseInt(message));
+				
+				try {
+					socketOut.writeObject(getCustomerList());
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

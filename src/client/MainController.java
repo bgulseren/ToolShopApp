@@ -4,11 +4,13 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+import customerModel.CustomerList;
 import inventoryModel.*;
 
 public class MainController {
 	
 	private Inventory inventory;
+	private CustomerList customerList;
 	private ClientController clCnt;
 	private InvViewController invView;
 	private CustViewController cusView;
@@ -17,12 +19,30 @@ public class MainController {
 		//Connection controller
 		this.clCnt = new ClientController(this);
 		
-		//Inventory gui and controller
+		//Inventory
 		this.inventory = null;
 		this.invView = new InvViewController(this);
 		
-		//Customer gui and controller
-		//this.cusView = new CustViewController(this);
+		//Customer
+		
+		this.customerList = null;
+		//testing this.cusView = new CustViewController(this);
+	}
+	
+	public InvViewController getInvView() {
+		return invView;
+	}
+	
+	public CustViewController getCusView() {
+		return cusView;
+	}
+	
+	public CustomerList getCustomerList() {
+		return customerList;
+	}
+	
+	public void setCustomerList(CustomerList customerList) {
+		this.customerList = customerList;
 	}
 	
 	public Inventory getInventory() {
@@ -41,13 +61,7 @@ public class MainController {
 		this.clCnt = client;
 	}
 	
-	public InvViewController getInvView() {
-		return invView;
-	}
-	
-	public CustViewController getCusView() {
-		return cusView;
-	}
+
 	
 	/**
 	 * Main
@@ -62,16 +76,16 @@ public class MainController {
 		MainController theApp = new MainController();
 		
 		//testing//
+		System.out.println("Testing getting the inventory from server (will trigger the DB to create a new model first and then passed to the client side");
 		theApp.getClientController().getInventoryFromSrv();
 		
+		//testing - get new list//
 		System.out.println(theApp.getInventory().toString());
 		
-		//testing//
+		theApp.getClientController().getCustomersFromSrv();
 		
-		System.out.println("Testing second update after first update");
-		theApp.getClientController().getInventoryFromSrv();
+		System.out.println(theApp.getCustomerList().toString());
 		
-		System.out.println(theApp.getInventory().toString());
 	}
 	
 }

@@ -1,7 +1,13 @@
 package customerModel;
 
-abstract public class Customer {
+import java.io.Serializable;
+
+abstract public class Customer implements Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private int ID;
 	private String firstName;
 	private String lastName;
@@ -62,6 +68,12 @@ abstract public class Customer {
 	}
 	public void setType(String type) {
 		this.type = type;
+	}
+	
+	@Override
+	public String toString() {
+		String out = getID() + " " + getType() + " " + getFirstName() + " " + getLastName() + " " + getAddress();
+		return out;
 	}
 
 }
