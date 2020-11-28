@@ -157,13 +157,14 @@ public abstract class Item implements Serializable {
 		return orderLine;
 	}
 	
-	public void createOrderLine() {
+	public void createOrderLine(int qty) {
 		orderLine = new OrderLine();
 		
 		orderLine.setId(this.getId());
 		orderLine.setName(this.getName());
 		orderLine.setSupplierId(this.supplier.getId());
 		orderLine.setSupplierName(this.supplier.getName());
+		orderLine.setQty(qty);
 	}
 	
 	/**
@@ -190,8 +191,7 @@ public abstract class Item implements Serializable {
 		
 		if (this.qty < 40 && orderLine == null) {
 			//The default quantity ordered by each item = 50 – number of existing items
-			createOrderLine();
-			orderLine.setQty(50 - this.getQty());
+			createOrderLine(50 - this.getQty());
 			return true;
 		}
 		return false;

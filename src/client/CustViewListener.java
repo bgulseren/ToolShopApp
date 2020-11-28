@@ -9,7 +9,7 @@ import views.CustomerView;
 
 public class CustViewListener implements ActionListener{
 
-	private final CustomerVIew cv ;
+	private final CustomerView cv;
 	private final CustViewController cvCtr;
 //	private final ModelController mCtr;
 //	private String[][] customerList;
@@ -25,7 +25,7 @@ public class CustViewListener implements ActionListener{
 	//For populating results table (JTable)
 	String[] columnNames = {"ID", "First Name", "Last Name", "Address", "Postal Code", "Phone #", "Type"};
 	
-	public CustViewListener(CustomerVIew pView) {
+	public CustViewListener(CustomerView pView) {
 		cvCtr = new CustViewController();
 		cv = pView;
 	}
@@ -91,7 +91,7 @@ public class CustViewListener implements ActionListener{
 		cvCtr.editCustomer(selectedID, fName, lName, address, postalCode, phoneNo, type);
 	}
 	
-	//delete selected reow
+	//delete selected row
 	public void deleteRow() {
 		int row = cv.getResultsTable().getSelectedRow();
 		String selectedID = cv.getResultsTable().getModel().getValueAt(row, 0).toString();

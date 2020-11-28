@@ -11,7 +11,6 @@ public class InvViewListener implements ActionListener{
 	private final InventoryView iv;
 	private final InvViewController ivCtr;
 	
-	
 	//for clearing search results table
 	DefaultTableModel emptyTableModel = new DefaultTableModel();
 	
@@ -67,15 +66,6 @@ public class InvViewListener implements ActionListener{
 	public void displayOrder() {
 		ivCtr.displayOrder();
 	}
-	
-	//***MAIN FOR TESTING***///
-	public static void main(String[] args) {
-		
-		InvViewController app = new InvViewController();
-		app.displayInventoryView();
-	}
-	
-	
 	
 }
 

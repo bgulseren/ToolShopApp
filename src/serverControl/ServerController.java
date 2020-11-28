@@ -113,7 +113,7 @@ public class ServerController {
 				int itemQty = Integer.parseInt(itemInfo[1]);
 				
 				//pass item to the inventory
-				this.model.getInventory().removeItem(itemId, itemQty);
+				this.model.getInventory().reduceItem(itemId, itemQty);
 				
 				//send back the updated inventory to the client
 				socketOut.writeObject(this.model.getInventory());

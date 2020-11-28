@@ -12,7 +12,7 @@ public class ClientModel {
 	public ClientModel(Inventory inv) {
 		this.inventory = inv;
 		this.invView = new InvViewController(this);
-		this.cusView = new CustViewController(this);
+		//this.cusView = new CustViewController(this);
 	}
 	
 	public Inventory getInventory() {

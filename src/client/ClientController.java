@@ -182,7 +182,7 @@ public class ClientController {
 	
 	/**
 	 * Main
-	 * @throws ClassNotFoundException 
+	 * @throws ClassNotFoundException
 	 */
 	public static void main (String [] args) throws IOException, ClassNotFoundException {
 		System.out.println("Press ENTER to connect to the tool shop.");
@@ -192,7 +192,7 @@ public class ClientController {
 		
 		ClientController aClient = new ClientController();
 		aClient.connect("localhost", 9898);
-		
+
 		aClient.communicate();
 	}
 

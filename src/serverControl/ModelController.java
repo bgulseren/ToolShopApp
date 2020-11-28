@@ -28,6 +28,11 @@ public class ModelController implements Runnable, Serializable {
 		return srvControl;
 	}
 	
+	
+	public DatabaseController getDb() {
+		return dbControl;
+	}
+	
 	/**
 	 * updates the inventory from db (sets)
 	 */
@@ -44,7 +49,7 @@ public class ModelController implements Runnable, Serializable {
 	
 	
 	public void loadSuppliersTable() {
-		String[][] suppliersTable = dbControl.extractTable("supplierstable");
+		String[][] suppliersTable = dbControl.extractTable("suppliertable");
 		
 		for (int i = 0; i < suppliersTable.length; i++) {
 			int id = Integer.parseInt(suppliersTable[i][0]);
@@ -77,17 +82,22 @@ public class ModelController implements Runnable, Serializable {
 	}
 	
 	public void loadOrderTable() {
-		String[][] ordersTable = dbControl.extractTable("orderlinestable");
+		String[][] ordersTable = dbControl.extractTable("orderlinetable");
 		
 		//now check orderlines to be associated to item
 		for (int i = 0; i < ordersTable.length; i++) {
 			
-			ordersTable[i][0];
-			ordersTable[i][1];
-			ordersTable[i][2];
-			ordersTable[i][3];
-			ordersTable
-			inv.searchItem(0).setOrderline();
+			//int orderId = Integer.parseInt(ordersTable[i][0]);
+			int itemId = Integer.parseInt(ordersTable[i][1]);
+			int itemQty = Integer.parseInt(ordersTable[i][2]);
+			//int supId = Integer.parseInt(ordersTable[i][3]);
+			
+			// find the matching item in inventory and create orderline in that item
+			
+			Item foundItem = this.inventory.searchItem(itemId);
+			if (foundItem != null) {
+				foundItem.createOrderLine(itemQty);
+			}
 		}
 	}
 	
@@ -149,32 +159,6 @@ public class ModelController implements Runnable, Serializable {
 		getNewInventory(); //get latest inventory info from db into model
 	}
 	
-	/**
-	 * Creates a new order and assigns order lines from the items into the active order.
-	 * Clears the order lines from the items as they are passed into an order.
-	 */
-	public void createOrder() {
-		if (this.order == null) {
-			this.order = new Order();
-			for(Item i : items) {
-				this.order.addOrderLine(i.getOrderLine());
-				i.clearOrderLine();
-			}
-		}
-	}
-	
-	/**
-	 * Returns the active order for this inventory.
-	 * 
-	 * @return the active order
-	 */
-	public Order getOrder() {
-		return this.order;
-	}
-	
-	public DatabaseController getDb() {
-		return dbControl;
-	}
 
 	@Override
 	public void run() {
