@@ -38,105 +38,33 @@ public class ServerController {
 
 	public void runServer () throws ClassNotFoundException, IOException {
 		
-		Socket cliSocket = new Socket();
-			
-		try {
-			cliSocket = serverSocket.accept();
-			System.out.println("Server: incoming client connection...");
-		} catch (IOException e) {
-			System.out.println("Server: socket failed");
-		}
-		
-		if (cliSocket.isConnected()) {
-			socketIn = new ObjectInputStream(cliSocket.getInputStream());
-			socketOut = new ObjectOutputStream (cliSocket.getOutputStream());
-			model = new ModelController(); //todo: maybe construct new each time client connects with UPDATE
-			model.setSrvControl(this);
-			System.out.println("Server: a new client is connected");
-		}
-				
-		//listening to client
 		while (true) {
-			String message = (String) socketIn.readObject();
+			Socket cliSocket = new Socket();
+				
+			try {
+				cliSocket = serverSocket.accept();
+				System.out.println("Server: incoming client connection...");
+			} catch (IOException e) {
+				System.out.println("Server: socket failed");
+			}
 			
-				/*============== UPDATE ==============*/
-			if (message.contains("UPDATE%")) {
-
-				model.getNewInventory();
-				socketOut.writeObject(this.model.getInventory());
-			
-				/*============== SEARCHBYNAME ==============*/
-			} else if (message.contains("SEARCHBYNAME%")) {
-				message.replace("SEARCHBYNAME%", ""); //remove message header
-				
-				//get result from inventory
-				model.getNewInventory();
-				this.model.getInventory().searchItem(message);
-				
-				//send back the updated inventory to the client
-				socketOut.writeObject(this.model.getInventory());
-				
-				/*============== SEARCHBYID ==============*/
-			} else if (message.contains("SEARCHBYID%")) {
-				message.replace("SEARCHBYID%", ""); //remove message header
-				
-				//get result from inventory
-				model.getNewInventory();
-				this.model.getInventory().searchItem(Integer.parseInt(message));
-				
-				//send back the updated inventory to the client
-				socketOut.writeObject(this.model.getInventory());
-				
-				/*============== ADDITEM ==============*/
-			} else if (message.contains("ADDITEM%")) {
-				message.replace("ADDITEM%", ""); //remove message header
-				
-				//parse incoming message to item related info
-				String[] itemInfo = message.split("%");
-				
-				String itemType = itemInfo[0];
-				int itemId = Integer.parseInt(itemInfo[1]);
-				String itemName = itemInfo[2];
-				int itemQty = Integer.parseInt(itemInfo[3]);
-				double itemPrice = Double.parseDouble(itemInfo[4]);
-				int itemSupId = Integer.parseInt(itemInfo[5]);
-				int itemPower = Integer.parseInt(itemInfo[6]);
-				
-				//pass item to the inventory
-				model.getNewInventory();
-				this.model.getInventory().addItem(itemType, itemId, itemName, itemQty, itemPrice, itemSupId, itemPower);
-				
-				//send back the updated inventory to the client
-				socketOut.writeObject(this.model.getInventory());
-			
-				/*============== REDUCEITEM ==============*/
-			} else if (message.contains("REDUCEITEM%")) {
-				message.replace("REDUCEITEM%", ""); //remove message header
-				
-				//parse incoming message to item related info
-				String[] itemInfo = message.split("%");
-				int itemId = Integer.parseInt(itemInfo[0]);
-				int itemQty = Integer.parseInt(itemInfo[1]);
-				
-				//pass item to the inventory
-				model.getNewInventory();
-				this.model.getInventory().reduceItem(itemId, itemQty);
-				
-				//send back the updated inventory to the client
-				socketOut.writeObject(this.model.getInventory());
-				
-				/*============== EXIT ==============*/
-			} else if (message.contains("EXIT%")) {
-				cliSocket.close();
-				break;
+			if (cliSocket.isConnected()) {
+				socketIn = new ObjectInputStream(cliSocket.getInputStream());
+				socketOut = new ObjectOutputStream (cliSocket.getOutputStream());
+				model = new ModelController(); //todo: maybe construct new each time client connects with UPDATE
+				model.setSrvControl(this);
+				//model.setClientSocket(cliSocket);
+				model.setSocketIn(socketIn);
+				model.setSocketOut(socketOut);
+				System.out.println("Server: a new client is connected");
 			}
 			
 			pool.execute(model);
 		}
+			
+		//pool.shutdown();
 		
-		pool.shutdown();
-		
-		System.out.println("Server: Server closed");
+		//System.out.println("Server: Server closed");
 	}
 	
 	/**

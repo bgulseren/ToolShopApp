@@ -133,8 +133,7 @@ public class ClientController {
         
         System.out.println("Received new Inventory from server");
         
-        System.out.println(inv);
-		//closeSocket(); //close resources
+		disconnect();
 	}
 
         
@@ -161,6 +160,11 @@ public class ClientController {
 //			
 //		}
 		
+	private void disconnect () throws IOException {
+		String messageOut = "DISCONNECT%";
+		socketOut.writeObject(messageOut);
+		closeSocket();
+	}
 	
 	/**
 	 * Closes all the sockets when app terminates

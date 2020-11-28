@@ -65,6 +65,13 @@ public class MainController {
 		theApp.getClientController().getInventoryFromSrv();
 		
 		System.out.println(theApp.getInventory().toString());
+		
+		//testing//
+		
+		System.out.println("Testing second update after first update");
+		theApp.getClientController().getInventoryFromSrv();
+		
+		System.out.println(theApp.getInventory().toString());
 	}
 	
 }

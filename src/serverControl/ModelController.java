@@ -1,5 +1,10 @@
 package serverControl;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
+
 import inventoryModel.*;
 
 public class ModelController implements Runnable {
@@ -7,10 +12,15 @@ public class ModelController implements Runnable {
 	private Inventory inventory;
 	private DatabaseController dbControl;
 	private ServerController srvControl;
+	private ObjectOutputStream socketOut;
+	private ObjectInputStream socketIn;
+	private Socket clientSocket;
 	
 	public ModelController() {
 		this.dbControl = new DatabaseController("inventorydb");
 		this.inventory = new Inventory();
+		socketIn = null;
+		socketOut = null;
 	}
 	
 	public void setSrvControl(ServerController srvControl) {
@@ -187,13 +197,139 @@ public class ModelController implements Runnable {
 		getNewInventory(); //get latest inventory info from db into model
 	}
 	
-
-	@Override
-	public void run() {
-		
-
+	public void setSocketIn(ObjectInputStream socketIn) {
+		this.socketIn = socketIn;
 	}
 	
+	public void setSocketOut(ObjectOutputStream socketOut) {
+		this.socketOut = socketOut;
+	}
 	
+	public void setClientSocket(Socket cliSocket) {
+		this.clientSocket = cliSocket;
+	}
+	
+	@Override
+	public void run() {
+		//listening to client
+		while (true) {
+			String message = "";
+			
+			try {
+				message = (String) socketIn.readObject();
+			} catch (ClassNotFoundException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			
+				/*============== UPDATE ==============*/
+			if (message.contains("UPDATE%")) {
+
+				getNewInventory();
+				try {
+					socketOut.writeObject(getInventory());
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			
+				/*============== SEARCHBYNAME ==============*/
+			} else if (message.contains("SEARCHBYNAME%")) {
+				message.replace("SEARCHBYNAME%", ""); //remove message header
+				
+				//get result from inventory
+				getNewInventory();
+				getInventory().searchItem(message);
+				
+				//send back the updated inventory to the client
+				try {
+					socketOut.writeObject(getInventory());
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				/*============== SEARCHBYID ==============*/
+			} else if (message.contains("SEARCHBYID%")) {
+				message.replace("SEARCHBYID%", ""); //remove message header
+				
+				//get result from inventory
+				getNewInventory();
+				getInventory().searchItem(Integer.parseInt(message));
+				
+				//send back the updated inventory to the client
+				try {
+					socketOut.writeObject(getInventory());
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				/*============== ADDITEM ==============*/
+			} else if (message.contains("ADDITEM%")) {
+				message.replace("ADDITEM%", ""); //remove message header
+				
+				//parse incoming message to item related info
+				String[] itemInfo = message.split("%");
+				
+				String itemType = itemInfo[0];
+				int itemId = Integer.parseInt(itemInfo[1]);
+				String itemName = itemInfo[2];
+				int itemQty = Integer.parseInt(itemInfo[3]);
+				double itemPrice = Double.parseDouble(itemInfo[4]);
+				int itemSupId = Integer.parseInt(itemInfo[5]);
+				int itemPower = Integer.parseInt(itemInfo[6]);
+				
+				//pass item to the inventory
+				getNewInventory();
+				getInventory().addItem(itemType, itemId, itemName, itemQty, itemPrice, itemSupId, itemPower);
+				
+				//send back the updated inventory to the client
+				try {
+					socketOut.writeObject(getInventory());
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			
+				/*============== REDUCEITEM ==============*/
+			} else if (message.contains("REDUCEITEM%")) {
+				message.replace("REDUCEITEM%", ""); //remove message header
+				
+				//parse incoming message to item related info
+				String[] itemInfo = message.split("%");
+				int itemId = Integer.parseInt(itemInfo[0]);
+				int itemQty = Integer.parseInt(itemInfo[1]);
+				
+				//pass item to the inventory
+				getNewInventory();
+				getInventory().reduceItem(itemId, itemQty);
+				
+				//send back the updated inventory to the client
+				try {
+					socketOut.writeObject(getInventory());
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				/*============== EXIT ==============*/
+			} else if (message.contains("DISCONNECT%")) {
+				try {
+					socketIn.close();
+					socketOut.close();
+					
+					//clientSocket.close(); //todo: try this one as well
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				System.out.println("Server: A client was disconnected");
+				break;
+			}
+		}
+	}
 
 }
