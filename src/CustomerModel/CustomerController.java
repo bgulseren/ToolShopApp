@@ -1,4 +1,4 @@
-package CustomerModel;
+package customerModel;
 
 public class CustomerController {
 	

@@ -1,4 +1,4 @@
-package CustomerModel;
+package customerModel;
 
 abstract public class Customer {
 	

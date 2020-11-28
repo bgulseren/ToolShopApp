@@ -1,4 +1,4 @@
-package CustomerModel;
+package customerModel;
 
 import java.util.ArrayList;
 import java.util.Arrays;
