@@ -137,6 +137,7 @@ public class Database {
 	public int updateQuant(String tableName, int toolID, int newQuantity) {
 		message = 0;
 		try {
+			
 			String query = "UPDATE `inventorydb`.`" + tableName + 
 						   "` SET `QUANTITY` = '" + newQuantity +
 						   "' WHERE (`TOOLID` = '" + toolID + "')";
@@ -158,7 +159,10 @@ public class Database {
 	 */
 	public int updateCustomerRow(int id, String fName, String lName, String address, String postalCode, String phoneNo, String cType) {
 		message = 0;
-		try {		
+		try {
+			String sql_selectDB = "USE " + databaseName;
+			PreparedStatement pStat_selectDB = jdbc_connection.prepareStatement(sql_selectDB);
+			pStat_selectDB.execute();
 			
 			String updateQuery = "UPDATE customertable SET CUSTOMERTYPE=?, FNAME=?, LNAME=?, ADDRESS=?, POSTALCODE=?, PHONENO=? WHERE ID=?";
 			
@@ -187,7 +191,11 @@ public class Database {
 	 */
 	public int updateToolRow(int id, String toolName, int quantity, double price, String toolType, int power) {
 		message = 0;
-		try {		
+		try {
+			
+			String sql_selectDB = "USE " + databaseName;
+			PreparedStatement pStat_selectDB = jdbc_connection.prepareStatement(sql_selectDB);
+			pStat_selectDB.execute();
 			
 			String updateQuery = "UPDATE tooltable SET TOOLNAME=?, QUANTITY=?, PRICE=?, TOOLTYPE=?, POWER=? WHERE TOOLID=?";
 			

@@ -9,12 +9,9 @@ import views.CustomerView;
 
 public class CustViewListener implements ActionListener{
 
-	private final CustomerView cv;
-	private final CustViewController cvCtr;
-//	private final ModelController mCtr;
-//	private String[][] customerList;
-
-
+	private CustomerView cv ;
+	private CustViewController cvCtr;
+	public String searchKey;
 	
 	
 	//for clearing search results (List and table)
@@ -22,12 +19,10 @@ public class CustViewListener implements ActionListener{
 	DefaultListModel emptyListModel = new DefaultListModel();
 	DefaultTableModel emptyTableModel = new DefaultTableModel();
 	
-	//For populating results table (JTable)
-	String[] columnNames = {"ID", "First Name", "Last Name", "Address", "Postal Code", "Phone #", "Type"};
 	
-	public CustViewListener(CustomerView pView) {
-		cvCtr = new CustViewController();
-		cv = pView;
+	public void setCustomerView(CustViewController cvCtr, CustomerView pView) {
+		this.cvCtr = cvCtr;
+		this.cv = pView;
 	}
 	
 
@@ -51,6 +46,9 @@ public class CustViewListener implements ActionListener{
 		else if(e.getSource() == cv.getClearChangesButton()) {
 			clearNewRowInput();
 		}
+		else if(e.getSource() == cv.getInvMgmtButton()) {
+			displayInvMgmtView();
+		}
 
 	}
 
@@ -60,16 +58,16 @@ public class CustViewListener implements ActionListener{
 	 */
 	public void searchCustomers(String searchText) {	
 		if(cv.getIdButton().isSelected()) {
-			cvCtr.searchCustomer(searchText, "SEARCHBYID");
-			cv.getResultsTable().setModel(new DefaultTableModel(cvCtr.getSearchResult(), columnNames));
+			cvCtr.searchCustomer(searchText, "CUSTSEARCHBYID");
+//			cv.getResultsTable().setModel(new DefaultTableModel(cvCtr.getSearchResult(), columnNames));
 		}
 		else if(cv.getlastNameButton().isSelected()) {
-			cvCtr.searchCustomer(searchText, "SEARCHBYNAME");
-			cv.getResultsTable().setModel(new DefaultTableModel(cvCtr.getSearchResult(), columnNames));
+			cvCtr.searchCustomer(searchText, "CUSTSEARCHBYNAME");
+//			cv.getResultsTable().setModel(new DefaultTableModel(cvCtr.getSearchResult(), columnNames));
 		}
 		else if(cv.getCustomerTypeButton().isSelected()) {
-			cvCtr.searchCustomer(searchText, "SEARCHBYID");
-			cv.getResultsTable().setModel(new DefaultTableModel(cvCtr.getSearchResult(), columnNames));
+			cvCtr.searchCustomer(searchText, "CUSTSEARCHBYTYPE");
+//			cv.getResultsTable().setModel(new DefaultTableModel(cvCtr.getSearchResult(), columnNames));
 		}
 	}
 	
@@ -82,16 +80,16 @@ public class CustViewListener implements ActionListener{
 	public void updateRow() {
 		int row = cv.getResultsTable().getSelectedRow();
 		String selectedID = cv.getResultsTable().getModel().getValueAt(row, 0).toString();
-		String fName = cv.getResultsTable().getModel().getValueAt(row, 1).toString();
-		String lName = cv.getResultsTable().getModel().getValueAt(row, 2).toString();
-		String address = cv.getResultsTable().getModel().getValueAt(row, 3).toString();
-		String postalCode = cv.getResultsTable().getModel().getValueAt(row, 4).toString();
-		String phoneNo = cv.getResultsTable().getModel().getValueAt(row, 5).toString();
-		String type = cv.getResultsTable().getModel().getValueAt(row, 6).toString();
+		String type = cv.getResultsTable().getModel().getValueAt(row, 1).toString();
+		String fName = cv.getResultsTable().getModel().getValueAt(row, 2).toString();
+		String lName = cv.getResultsTable().getModel().getValueAt(row, 3).toString();
+		String address = cv.getResultsTable().getModel().getValueAt(row, 4).toString();
+		String postalCode = cv.getResultsTable().getModel().getValueAt(row, 5).toString();
+		String phoneNo = cv.getResultsTable().getModel().getValueAt(row, 6).toString();
 		cvCtr.editCustomer(selectedID, fName, lName, address, postalCode, phoneNo, type);
 	}
 	
-	//delete selected row
+	//delete selected reow
 	public void deleteRow() {
 		int row = cv.getResultsTable().getSelectedRow();
 		String selectedID = cv.getResultsTable().getModel().getValueAt(row, 0).toString();
@@ -100,13 +98,19 @@ public class CustViewListener implements ActionListener{
 		
 	//add row (customer)
 	public void addRow() {
+		String id = cv.getID().getText();
 		String fName = cv.getFName().getText();
 		String lName = cv.getLName().getText();
 		String address = cv.getAddress().getText();
 		String postalCode = cv.getPostalCode().getText();
 		String phoneNo = cv.getPhoneNo().getText();
 		String type = cv.getType().getText();
-		cvCtr.addCustomer(fName, lName, address, postalCode, phoneNo, type);
+		cvCtr.addCustomer(id, fName, lName, address, postalCode, phoneNo, type);
+	}
+	
+	//switch to inventory management view
+	public void displayInvMgmtView() {
+		cvCtr.displayInvMgmtView();
 	}
 	
 	//clear new customer fields

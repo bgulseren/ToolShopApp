@@ -1,7 +1,5 @@
 package views;
 
-import java.awt.EventQueue;
-
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import java.awt.Font;
@@ -9,7 +7,6 @@ import javax.swing.SwingConstants;
 import javax.swing.JPanel;
 import javax.swing.border.TitledBorder;
 
-import client.InvViewController;
 import client.InvViewListener;
 
 import javax.swing.JRadioButton;
@@ -19,36 +16,35 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.ButtonGroup;
+import java.awt.Color;
 
 public class InventoryView {
 
-	private InvViewController ivCtr;
-	
 	public JFrame frame;
 	private JTextField searchTextField;
 	private JTable resultsTable;
-	private final ButtonGroup buttonGroup = new ButtonGroup();
 	
 	private JRadioButton searchToolNameButton;
 	private JRadioButton searchByToolIdButton;
+	private ButtonGroup buttonGroup = new ButtonGroup();
 	
 	private JButton searchToolButton;
 	private JButton displayAllToolsButton;
 	private JButton decreaseQuantityButton;
 	private JButton displayTodaysOrderButton;
+	private JButton custMgmtButton;
 
 	/**
 	 * Create the application.
 	 */
-	public InventoryView(InvViewController ivCtr) {
-		this.ivCtr = ivCtr;
-		initialize();
+	public InventoryView(InvViewListener actListener) {
+		initialize(actListener);
 	}
 
 	/**
 	 * Initialize the contents of the frame.
 	 */
-	private void initialize() {
+	private void initialize(InvViewListener actListener) {
 		frame = new JFrame();
 		frame.setResizable(false);
 		frame.setBounds(100, 100, 1020, 736);
@@ -106,12 +102,17 @@ public class InventoryView {
 		displayTodaysOrderButton.setBounds(189, 642, 174, 23);
 		frame.getContentPane().add(displayTodaysOrderButton);
 		
+		custMgmtButton = new JButton("Customer Management");
+		custMgmtButton.setBackground(Color.CYAN);
+		custMgmtButton.setBounds(823, 76, 164, 29);
+		frame.getContentPane().add(custMgmtButton);
+		
 		//Connect to InvViewListener class
-		InvViewListener actListener = new InvViewListener(this);
 		searchToolButton.addActionListener(actListener);
 		displayAllToolsButton.addActionListener(actListener);
 		decreaseQuantityButton.addActionListener(actListener);
 		displayTodaysOrderButton.addActionListener(actListener);
+		custMgmtButton.addActionListener(actListener);
 		
 	}
 	
@@ -134,6 +135,10 @@ public class InventoryView {
 	
 	public JButton getDisplayOrderButton() {
 		return displayTodaysOrderButton;
+	}
+	
+	public JButton getCustMgmtButton() {
+		return custMgmtButton;
 	}
 	
 	
@@ -160,9 +165,5 @@ public class InventoryView {
 	
 	public JRadioButton getSearchToolIdButton() {
 		return searchByToolIdButton;
-	}
-	
-	public InvViewController getIvCtr() {
-		return ivCtr;
 	}
 }

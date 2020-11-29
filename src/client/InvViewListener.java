@@ -8,23 +8,28 @@ import views.InventoryView;
 
 public class InvViewListener implements ActionListener{
 
-	private final InventoryView iv;
-	private final InvViewController ivCtr;
+	private InventoryView iv;
+	private InvViewController ivCtr;
+	private String searchKey;
+
+
 	
 	//for clearing search results table
 	DefaultTableModel emptyTableModel = new DefaultTableModel();
 	
 	String[] columnNames = {"ID", "Name", "Quantity", "Price", "Type", "Power", "SupplierID"};
 	
-	public InvViewListener(InventoryView pView) {
+	
+	public void setInventoryView(InvViewController ivCtr, InventoryView pView) {
+		this.ivCtr = ivCtr;
 		this.iv = pView;
-		this.ivCtr = iv.getIvCtr();
 	}
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource() == iv.getSearchButton()) {
-			searchTools(iv.getSearchTextField());
+			searchKey = iv.getSearchTextField();
+			searchTools(searchKey);
 		}
 		else if(e.getSource() == iv.getDisplayAllButton()) {
 			displayAllTools();
@@ -33,7 +38,10 @@ public class InvViewListener implements ActionListener{
 			decreaseToolQuantity();
 		}
 		else if(e.getSource() == iv.getDisplayOrderButton()) {
-			//displayOrder();
+			displayOrder();
+		}
+		else if(e.getSource() == iv.getCustMgmtButton()) {
+			displayCustMgmtView();
 		}
 	}
 	
@@ -43,25 +51,38 @@ public class InvViewListener implements ActionListener{
 	 */
 	public void searchTools(String searchText) {	
 		if(iv.getSearchToolNameButton().isSelected()) {
-			ivCtr.searchItem(searchText);
-			//iv.getResultsTable().setModel(new DefaultTableModel(ivCtr.getSearchResult(), columnNames));
+			ivCtr.searchTool(searchText, "INVSEARCHBYNAME");
 		}
 		else if(iv.getSearchToolIdButton().isSelected()) {
-			ivCtr.searchItem(Integer.parseInt(searchText));
-			//iv.getResultsTable().setModel(new DefaultTableModel(ivCtr.getSearchResult(), columnNames));
+			ivCtr.searchTool(searchText, "INVSEARCHBYID");
 		}
 	}
 	
+	public void updateView() {
+		iv.getResultsTable().setModel(new DefaultTableModel(ivCtr.getSearchResult(), columnNames));
+	}
+	
 	public void displayAllTools() {
-		ivCtr.update();
+		ivCtr.displayAllTools();
 	}
 	
 	public void decreaseToolQuantity() {
 		int row = iv.getResultsTable().getSelectedRow();
-		String selectedID = iv.getResultsTable().getModel().getValueAt(row,0).toString();
-		ivCtr.reduceItem(Integer.parseInt(selectedID), 1);
+		if(row != -1) {
+			String selectedID = iv.getResultsTable().getModel().getValueAt(row,0).toString();
+			String currentQuantity = iv.getResultsTable().getModel().getValueAt(row,2).toString();
+			ivCtr.decreaseQuantity(selectedID, currentQuantity);
+		}
 	}
 	
+	public void displayOrder() {
+		ivCtr.displayOrder();
+	}
+	
+	//switch to inventory management view
+	public void displayCustMgmtView() {
+		ivCtr.displayCustMgmtView();
+	}
 	
 }
 

@@ -20,6 +20,7 @@ public class ElectricalItem extends Item implements Serializable {
 		this.power = power;
 	}
 	
+	@Override
 	public int getPower() {
 		return power;
 	}

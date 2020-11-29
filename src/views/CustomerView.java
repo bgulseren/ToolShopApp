@@ -23,8 +23,7 @@ import java.awt.Color;
 //import javax.swing.border.BevelBorder;
 import javax.swing.border.TitledBorder;
 
-import ViewControllers.CustViewListener;
-import ViewControllers.GuiListener;
+import client.CustViewListener;
 
 import javax.swing.UIManager;
 import javax.swing.JRadioButton;
@@ -33,13 +32,13 @@ import javax.swing.JButton;
 import javax.swing.JScrollPane;
 //import javax.swing.JTextPane;
 //import javax.swing.DropMode;
-import javax.swing.JList;
+//import javax.swing.JList;
 //import javax.swing.JRadioButtonMenuItem;
 import javax.swing.ButtonGroup;
 //import javax.swing.event.ListSelectionListener;
 //import javax.swing.event.ListSelectionEvent;
 import javax.swing.JTable;
-import javax.swing.table.DefaultTableModel;
+//import javax.swing.table.DefaultTableModel;
 import javax.swing.ListSelectionModel;
 
 public class CustomerView {
@@ -68,21 +67,22 @@ public class CustomerView {
 	private JButton deleteRowButton;
 	private JButton addRowButton;
 	private JButton clearChangesButton;
+	private JButton invMgmtButton;
 
 
 
 	/**
 	 * Create the application.
 	 */
-	public CustomerView() {
-		initialize();
+	public CustomerView(CustViewListener actListener) {
+		initialize(actListener);
 	}
 
 	/**
 	 * Initialize the contents of the frame.
 	 */
 //	@SuppressWarnings("serial")
-	public void initialize() {
+	public void initialize(CustViewListener actListener) {
 		
 		frame = new JFrame();
 		frame.setResizable(false);
@@ -225,18 +225,21 @@ public class CustomerView {
 		deleteRowButton.setBounds(153, 630, 115, 29);
 		frame.getContentPane().add(deleteRowButton);
 		
+		invMgmtButton = new JButton("Inventory Management");
+		invMgmtButton.setBackground(Color.CYAN);
+		invMgmtButton.setBounds(819, 64, 164, 29);
+		frame.getContentPane().add(invMgmtButton);
 		
-		//Connect to GuiListener class
-		CustViewListener actListener = new CustViewListener(this);
+		
+		//Connect to CustViewListener class
 		searchButton.addActionListener(actListener);
 		clearSearchButton.addActionListener(actListener);
 		saveChangesButton.addActionListener(actListener);
 		deleteRowButton.addActionListener(actListener);
 		addRowButton.addActionListener(actListener);
 		clearChangesButton.addActionListener(actListener);
-		
-
-		
+		invMgmtButton.addActionListener(actListener);
+	
 	}
 	
 	/*
@@ -272,6 +275,10 @@ public class CustomerView {
 		return clearChangesButton;
 	}
 	
+	public JButton getInvMgmtButton() {
+		return invMgmtButton;
+	}
+	
 	public JTable getResultsTable() {
 		return resultsTable;
 	}
@@ -295,6 +302,10 @@ public class CustomerView {
 	/*
 	 * getters for text input fields for adding new row (customer)
 	 */
+	public JTextField getID() {
+		return idField;
+	}
+	
 	public JTextField getFName() {
 		return fNameField;
 	}
@@ -318,5 +329,4 @@ public class CustomerView {
 	public JTextField getType() {
 		return typeField;
 	}
-	
 }

@@ -224,6 +224,13 @@ public class ModelController implements Runnable {
 		return result;
 	}
 	
+	private int addCustomer(String[] customerInfo) {
+
+		int result = dbControl.addRow("customertable", customerInfo);
+		getNewCustomerList(); //get updated customers list
+		return result;
+	}
+	
 	public int updateCustomer(String[] customerInfo) {
 		
 		int id = Integer.parseInt(customerInfo[0]);
@@ -437,6 +444,23 @@ public class ModelController implements Runnable {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+				
+				/*============== ADD CUSTOMER ==============*/
+			} else if (message.contains("ADDCUSTOMER%")) {
+				message = message.replace("ADDCUSTOMER%", ""); //remove message header
+				
+				//parse incoming message to customer related info
+				String[] customerInfo = message.split("%");
+				
+				addCustomer(customerInfo);
+				
+				try {
+					socketOut.writeObject(getCustomerList());
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}	
+				
 				
 				/*============== EDIT CUSTOMER ==============*/
 			} else if (message.contains("EDITCUSTOMER%")) {

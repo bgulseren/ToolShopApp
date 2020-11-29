@@ -11,7 +11,7 @@ public class CustomerList implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	private ArrayList<Customer> customerList;
-	private String[][] searchResult;
+	//private String[][] searchResult;
 	
 	
 	/*
@@ -63,12 +63,12 @@ public class CustomerList implements Serializable {
 		String[][] searchResult = new String[rows][7];
 		for(int r = 0; r<rows; r++) {
 			searchResult[r][0] = Integer.toString(customerList.get(r).getID());
-			searchResult[r][1] = customerList.get(r).getFirstName();
-			searchResult[r][2] = customerList.get(r).getLastName();
-			searchResult[r][3] = customerList.get(r).getAddress();
-			searchResult[r][4] = customerList.get(r).getPostalCode();
-			searchResult[r][5] = customerList.get(r).getPhoneNo();
-			searchResult[r][6] = customerList.get(r).getType();
+			searchResult[r][1] = customerList.get(r).getType();
+			searchResult[r][2] = customerList.get(r).getFirstName();
+			searchResult[r][3] = customerList.get(r).getLastName();
+			searchResult[r][4] = customerList.get(r).getAddress();
+			searchResult[r][5] = customerList.get(r).getPostalCode();
+			searchResult[r][6] = customerList.get(r).getPhoneNo();
 		}
 		System.out.println(Arrays.deepToString(searchResult));
 		return searchResult;

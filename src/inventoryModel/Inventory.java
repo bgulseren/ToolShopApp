@@ -8,6 +8,7 @@
 package inventoryModel;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 
 public class Inventory implements Serializable {
@@ -192,6 +193,28 @@ public class Inventory implements Serializable {
 	 */
 	public Order getOrder() {
 		return this.order;
+	}
+	
+	
+	/*
+	 * list all items in the inventory into a 2d string array
+	 */
+	public String[][] listAllItems() {
+		int rows = getItems().size();
+		String[][] searchResult = new String[rows][7];
+		
+		for(int r = 0; r<rows; r++) {
+			searchResult[r][0] = Integer.toString(getItems().get(r).getId());
+			searchResult[r][1] = getItems().get(r).getName();
+			searchResult[r][2] = Integer.toString(getItems().get(r).getQty());
+			searchResult[r][3] = Double.toString(getItems().get(r).getPrice());
+			searchResult[r][4] = getItems().get(r).getItemType();
+			searchResult[r][5] = Integer.toString(getItems().get(r).getPower());
+			searchResult[r][6] = Integer.toString(getItems().get(r).getSupplier().getId());
+			
+		}
+		System.out.println(Arrays.deepToString(searchResult));
+		return searchResult;
 	}
 	
 	

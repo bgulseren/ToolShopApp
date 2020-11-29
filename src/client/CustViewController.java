@@ -2,16 +2,15 @@ package client;
 
 //import CustomerVIew from Views package
 import views.CustomerView;
-import java.awt.EventQueue;
+
+import javax.swing.table.DefaultTableModel;
 
 public class CustViewController {
 	
-//	private ClientModel model;
-	
-	
 	private CustomerView cv;
-	private String request;
-	
+	private CustViewListener cl;
+	private String request = "";
+		
 	private String id;
 	private String fName;
 	private String lName;
@@ -21,6 +20,17 @@ public class CustViewController {
 	private String type;
 	private String searchKey;
 	
+	public CustomerView getCv() {
+		return cv;
+	}
+	
+	public CustViewListener getCl() {
+		return cl;
+	}
+	
+	//For populating results table (JTable)
+	String[] columnNames = {"ID", "Type", "First Name", "Last Name", "Address", "Postal Code", "Phone #"};
+	
 	// true = fail
 	// false = success
 	private boolean error;
@@ -28,31 +38,18 @@ public class CustViewController {
 	private String errorMessage;
 
 	private String[][] searchResult;
-
 	
-	String[][] searchQuery = {
-		{"1001", "John", "Bones", "123 Long St Calgary", "T2M1H8", "403-234-9987", "Residential"},
-		{"1002", "Ahmed", "Zaki", "456 Short St Calgary", "T2M1A4", "403-827-1231", "Commercial"}
-	};
 	
-	public void displayCustomerView() {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					cv = new CustomerView();
-					cv.frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
+	public CustViewController() {
+		cl = new CustViewListener();
+		cv = new CustomerView(cl);
+		cl.setCustomerView(this, cv);
 	}
-
 	
-	public void searchCustomer(String searchkey, String request) {
-		this.setSearchKey(searchkey);
+
+	public void searchCustomer(String searchKey, String request) {
+		this.searchKey = searchKey;
 		this.request = request;
-		updateView(searchQuery);
 	}
 	
 	public void editCustomer(String id, String fName, String lName, String address, String postalCode, String phoneNo, String type) {
@@ -64,16 +61,16 @@ public class CustViewController {
 		this.phoneNo = phoneNo;
 		this.type = type;
 		System.out.println(fName + lName + address + postalCode + phoneNo +  type);
-		request = "UPDATE";
+		request = "CUSTUPDATE";
 	}
 	
 	public void deleteCustomer(String id) {
 		this.id = id;
-		System.out.println(id);
-		request = "DELETE";
+		request = "CUSTDELETE";
 	}
 	
-	public void addCustomer(String fName, String lName, String address, String postalCode, String phoneNo, String type) {
+	public void addCustomer(String id, String fName, String lName, String address, String postalCode, String phoneNo, String type) {
+		this.id = id;
 		this.fName = fName;
 		this.lName = lName;
 		this.address = address;
@@ -81,7 +78,7 @@ public class CustViewController {
 		this.phoneNo = phoneNo;
 		this.type = type;
 		System.out.println(fName + lName + address + postalCode + phoneNo +  type);
-		request = "ADD";
+		request = "CUSTADD";
 	}
 
 	public String getRequest() {
@@ -98,12 +95,18 @@ public class CustViewController {
 		return searchResult;
 	}
 	
+	public void displayInvMgmtView() {
+		request = "ACTIVATEINVMGMT";
+	}
+	
 	/*
 	 * called by ModelController to update customerList 2D String up search results
 	 */
 	public void updateView(String[][] searchResult) {
 		this.searchResult = searchResult;
+		cv.getResultsTable().setModel(new DefaultTableModel(getSearchResult(), columnNames));
 	}
+
 	
 	public String getId() {
 		return id;
@@ -203,13 +206,5 @@ public class CustViewController {
 	public void setSearchKey(String searchKey) {
 		this.searchKey = searchKey;
 	}	
-	
-	//***MAIN FOR TESTING***///
-	public static void main(String[] args) {
 		
-		CustViewController app = new CustViewController();
-		app.displayCustomerView();
-	}
-
-	
 }

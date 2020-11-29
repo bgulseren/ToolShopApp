@@ -1,71 +1,65 @@
 package client;
 
+
+import javax.swing.table.DefaultTableModel;
+
 import views.InventoryView;
 
 public class InvViewController {
 	
-	private ClientModel model;
-	private InventoryView invGui;
+	private InventoryView iv;
+	private InvViewListener il;
+	private String request = "";
 	
-	public String itemType;
-	public String itemName;
-	public int itemId;
-	public double itemPrice;
-	public int itemQty;
-	public int itemSupplierId;
-	public int itemPower;
+	private String id;
+	private String name;
+	private String currentQuantity;
+	private String searchKey;
 	
-	private String request;
-	
-	public InvViewController(ClientModel model) {
-		this.model = model;
-		this.invGui = new InventoryView(this);
-
-		request = "NONE";
+	public InventoryView getIv() {
+		return iv;
 	}
 	
-	public void update() {
-		request = "UPDATE";
+	String[] columnNames = {"ID", "Name", "Quantity", "Price", "Type", "Power", "SupplierID"};
+	
+	
+	public InvViewListener getListerner() {
+		return il;
 	}
 	
-	public void searchItem(String itemName) {
-		this.itemName = itemName;
-		request = "SEARCHBYNAME";
+	
+	// true = fail
+	// false = success
+	//private boolean error;
+	
+	//private String errorMessage;
+	
+	private String[][] searchResult;
+	
+	public InvViewController() {
+		il = new InvViewListener();
+		iv = new InventoryView(il);
+		il.setInventoryView(this, iv);
 	}
 	
-	public void searchItem(int itemId) {
-		this.itemId = itemId;
-		request = "SEARCHBYID";
+	public void searchTool(String searchKey, String request) {
+		this.searchKey = searchKey;
+		this.request = request;
 	}
 	
-	public void addItem(String itemType,
-						String itemName,
-						int itemId,
-						double itemPrice,
-						int itemQty,
-						int itemSupplierId,
-						int itemPower) {
-		
-		this.itemType = itemType;
-		this.itemName = itemName;
-		this.itemId = itemId;
-		this.itemPrice = itemPrice;
-		this.itemQty = itemQty;
-		this.itemSupplierId = itemSupplierId;
-		this.itemPower = itemPower;
-
-		request = "ADD";
+	public void displayAllTools() {
+		this.request = "INVDISPLAYALL";
 	}
 	
-	public void reduceItem(int itemId, int itemQty) {
-		this.itemId = itemId;
-		this.itemQty = itemQty;
-		request = "REDUCE";
+	public void decreaseQuantity(String searchKey, String currentQuantity) {
+		this.searchKey = searchKey;
+		this.id = searchKey;
+		this.currentQuantity = currentQuantity;
+		this.request = "INVDECREASEQUANTITY";
 	}
 	
-	public void deleteItem(int itemId) {
-		this.itemId = itemId;
-		request = "DELETE";
+	public void displayOrder() {
+		this.request = "INVDISPLAYORDER";
 	}
 	
 	public String getRequest() {
@@ -78,10 +72,52 @@ public class InvViewController {
 		request = "NONE";
 	}
 	
-	public void updateView() {
-		
-		//itemName = this.model.getInventory().getSelectedItem().getName();
-		//method to update inform the gui that it can use the new values to populate stuff
+	public String[][] getSearchResult(){
+		return searchResult;
+	}
+	
+	public void displayCustMgmtView() {
+		request = "ACTIVATECUSTMGMT";
+	}
+	
+	/*
+	 * called by ModelController to update customerList 2D String up search results
+	 */
+	public void updateView(String[][] searchResult) {
+		this.searchResult = searchResult;
+		iv.getResultsTable().setModel(new DefaultTableModel(getSearchResult(), columnNames));
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getCurrentQuantity() {
+		return currentQuantity;
+	}
+
+	public void setCurrentQuantity(String currentQuantity) {
+		this.currentQuantity = currentQuantity;
+	}
+
+	public String getSearchKey() {
+		return searchKey;
+	}
+
+	public void setSearchKey(String searchKey) {
+		this.searchKey = searchKey;
 	}
 
 }

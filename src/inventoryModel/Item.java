@@ -97,6 +97,10 @@ public abstract class Item implements Serializable {
 		return itemType;
 	}
 	
+	public int getPower() {
+		return 0;
+	}
+	
 	public void setItemType(String itemType) {
 		this.itemType = itemType;
 	}

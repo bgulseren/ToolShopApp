@@ -1,8 +1,6 @@
 package client;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
@@ -78,7 +76,7 @@ public class ClientController {
 	public void searchItemByNameFromSrv () throws ClassNotFoundException, IOException {
 		connect();
 		
-		String itemName = mainCtr.getInvView().itemName;
+		String itemName = mainCtr.getInvView().getName();
 		
 		String messageOut = "SEARCHBYNAME" + "%" + itemName;
 		socketOut.writeObject(messageOut);
@@ -88,20 +86,17 @@ public class ClientController {
 	public void searchItemByIdFromSrv () throws ClassNotFoundException, IOException {
 		connect();
 		
-		int itemId = mainCtr.getInvView().itemId;
+		String itemId = mainCtr.getInvView().getId();
 		
 		String messageOut = "SEARCHBYID" + "%" + itemId;
 		socketOut.writeObject(messageOut);
 		readInventoryFromSrv();
 	}
 	
-	public void reduceItemFromSrv () throws ClassNotFoundException, IOException {
+	public void reduceItemFromSrv (String itemId, int itemQtyToReduce) throws ClassNotFoundException, IOException {
 		connect();
 		
-		int itemId = mainCtr.getInvView().itemId;
-		int itemQty = mainCtr.getInvView().itemQty;
-		
-		String messageOut = "REDUCEITEM" + "%" + itemId + "%" + itemQty;
+		String messageOut = "REDUCEITEM" + "%" + itemId + "%" + itemQtyToReduce;
 		socketOut.writeObject(messageOut);
 		readInventoryFromSrv();
 	}
@@ -109,7 +104,7 @@ public class ClientController {
 	public void deleteItemFromSrv () throws ClassNotFoundException, IOException {
 		connect();
 		
-		int itemId = mainCtr.getInvView().itemId;
+		String itemId = mainCtr.getInvView().getId();
 		
 		String messageOut = "DELETEITEM" + "%" + itemId;
 		socketOut.writeObject(messageOut);
@@ -127,24 +122,24 @@ public class ClientController {
 	public void addItemFromSrv () throws ClassNotFoundException, IOException {
 		connect();
 		
-		String itemType = mainCtr.getInvView().itemType;
-		String itemName = mainCtr.getInvView().itemName;
-		int itemId = mainCtr.getInvView().itemId;
-		double itemPrice = mainCtr.getInvView().itemPrice;
-		int itemQty = mainCtr.getInvView().itemQty;
-		int itemSupplierId = mainCtr.getInvView().itemSupplierId;
-		int itemPower = mainCtr.getInvView().itemPower;
-		
-		String messageOut = "ADDITEM" + "%" +
-				itemId + "%" +
-				itemName + "%" +
-				itemQty + "%" +
-				itemPrice + "%" +
-				itemType + "%" +
-				itemPower + "%" +
-				itemSupplierId;
+//		String itemType = mainCtr.getInvView().itemType;
+//		String itemName = mainCtr.getInvView().itemName;
+//		int itemId = mainCtr.getInvView().itemId;
+//		double itemPrice = mainCtr.getInvView().itemPrice;
+//		int itemQty = mainCtr.getInvView().itemQty;
+//		int itemSupplierId = mainCtr.getInvView().itemSupplierId;
+//		int itemPower = mainCtr.getInvView().itemPower;
+//		
+//		String messageOut = "ADDITEM" + "%" +
+//				itemId + "%" +
+//				itemName + "%" +
+//				itemQty + "%" +
+//				itemPrice + "%" +
+//				itemType + "%" +
+//				itemPower + "%" +
+//				itemSupplierId;
 
-		socketOut.writeObject(messageOut);
+//		socketOut.writeObject(messageOut);
 		readInventoryFromSrv();
 	}
 	
@@ -169,6 +164,30 @@ public class ClientController {
 		String messageOut = "UPDATECUSTOMERS%";
 		socketOut.writeObject(messageOut);
 		readCustomersFromSrv();
+	}
+	
+	public void addCustomerFromSrv () throws ClassNotFoundException, IOException {
+		connect();
+		
+		String cusId = mainCtr.getCvc().getId();
+		String cusFName = mainCtr.getCvc().getfName();
+		String cusLName = mainCtr.getCvc().getlName();
+		String cusAddress = mainCtr.getCvc().getAddress();
+		String cusPCode = mainCtr.getCvc().getPostalCode();
+		String cusPhone = mainCtr.getCvc().getPhoneNo();
+		String cusType = mainCtr.getCvc().getType();
+		
+		String messageOut = "ADDCUSTOMER" + "%" +
+				cusId + "%" +
+				cusType + "%" +
+				cusFName + "%" +
+				cusLName + "%" +
+				cusAddress + "%" +
+				cusPCode + "%" +
+				cusPhone;
+
+		socketOut.writeObject(messageOut);
+		readInventoryFromSrv();
 	}
 	
 	public void editCustomerFromSrv () throws ClassNotFoundException, IOException {
@@ -206,7 +225,7 @@ public class ClientController {
 	}
 	
 	// Overloaded version
-	public void deleteCustomerFromSrv (int customerId) throws ClassNotFoundException, IOException {
+	public void deleteCustomerFromSrv (String customerId) throws ClassNotFoundException, IOException {
 		connect();
 		
 		String messageOut = "DELETECUSTOMER" + "%" + customerId;
@@ -224,32 +243,7 @@ public class ClientController {
         
 		disconnect();
 	}
-	
-	
 
-        
-//		while (!finished) {
-//			String invViewReq = mainCtr.getInvView().getRequest();
-//			
-//			
-//			if (invViewReq.contentEquals("UPDATE") ) {
-//
-//		        
-//			} else if (invViewReq.contentEquals("SEARCHBYNAME") ) {
-//
-//		        
-//			} else if (invViewReq.contentEquals("SEARCHBYID") ) {
-//
-//		        
-//			} else if (invViewReq.contentEquals("ADDITEM") ) {
-//
-//		    
-//			}  else if (invViewReq.contentEquals("REDUCEITEM") ) {
-//				
-//			}
-//			
-//			
-//		}
 		
 	private void disconnect () throws IOException {
 		String messageOut = "DISCONNECT%";

@@ -39,6 +39,7 @@ public class ServerController {
 	public void runServer () throws ClassNotFoundException, IOException {
 		
 		while (true) {
+
 			Socket cliSocket = new Socket();
 				
 			try {
