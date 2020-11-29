@@ -123,10 +123,20 @@ public class ModelController implements Runnable {
 			int orderId = Integer.parseInt(ordersTable[i][0]);
 			
 			try {
-				java.util.Date orderDate = new SimpleDateFormat("MM-dd-yyyy").parse(ordersTable[i][1]);
-				java.util.Date today = new java.util.Date();
+				java.util.Date orderDate = new SimpleDateFormat("yyyy-MM-dd").parse(ordersTable[i][1]);
 
-				if (today.compareTo(orderDate) == 0) {
+				java.util.Date today = new java.util.Date();
+			    SimpleDateFormat sdformat = new SimpleDateFormat("yyyy-MM-dd");
+			    java.util.Date d1 = sdformat.parse(today.getYear() + "-" + today.getMonth() + "-" + today.getDay());
+
+				System.out.println("DB order date format (as string): " + ordersTable[i][1]);
+				System.out.println("Db order id " + orderId + " db order date " + orderDate);
+				System.out.println("Today is " + today);
+				
+				if (d1.compareTo(orderDate) == 0) {
+					
+					System.out.println("Today's order found in db");
+					
 					java.sql.Date sqlDate = new java.sql.Date(orderDate.getTime());
 					
 					this.inventory.setOrder(orderId, sqlDate);

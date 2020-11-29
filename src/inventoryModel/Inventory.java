@@ -8,7 +8,6 @@
 package inventoryModel;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Date;
 
 
 public class Inventory implements Serializable {

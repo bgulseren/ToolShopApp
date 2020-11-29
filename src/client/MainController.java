@@ -1,8 +1,14 @@
 package client;
 
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.Writer;
+import java.util.ArrayList;
+import java.util.Scanner;
 
 import customerModel.CustomerList;
 import inventoryModel.*;
@@ -61,7 +67,32 @@ public class MainController {
 		this.clCnt = client;
 	}
 	
-
+	public void printOrder() {
+		
+		File file = new File("reports/orderSummary.txt");
+        
+		if (inventory.getOrder() != null) {
+	        String data = inventory.getOrder().toString();
+	        
+	        try(FileOutputStream fos = new FileOutputStream(file);
+	            BufferedOutputStream bos = new BufferedOutputStream(fos)) {
+	        	
+	            //convert string to byte array
+	            byte[] bytes = data.getBytes();
+	            
+	            //write byte array to file
+	            bos.write(bytes);
+	            bos.close();
+	            fos.close();
+	            
+	            System.out.print("Order written to file successfully.");
+	        } catch (IOException e) {
+	            e.printStackTrace();
+	        }
+		} else {
+        	System.out.println("No order to print!");
+        }
+	}
 	
 	/**
 	 * Main
@@ -113,6 +144,10 @@ public class MainController {
 		System.out.println("Test: Delete customer 8009 Jacob from server");
 		theApp.getClientController().deleteCustomerFromSrv(8009);
 		System.out.println(theApp.getCustomerList().toString());
+		
+		// ==== Test case === //
+		System.out.println("Test: Generating order report as txt");
+		theApp.printOrder();
 		
 	}
 	
