@@ -100,7 +100,9 @@ public class Database {
 	 * TODO: change to int return 
 	 */
 	
-	public int addRow(String tableName, String[] newRow) {
+	public int addRow(String tableName, String[] newRow) throws SQLException {
+		String sql_selectDB = "USE " + databaseName;
+		
 		message = 0;
 		int cols = newRow.length;
 		String sql = "INSERT INTO " + tableName +
@@ -113,13 +115,16 @@ public class Database {
 		sql += "'" + newRow[cols - 1] + "');";
 
 		try{
+			PreparedStatement pStat_selectDB = jdbc_connection.prepareStatement(sql_selectDB);
 			PreparedStatement pStat = jdbc_connection.prepareStatement(sql);
+			pStat_selectDB.execute();
 			pStat.executeUpdate(sql);
 		}
 		catch(SQLException e){
-			// message 1 = dupplicate value error
+			// message 1 = duplicate value error
+			e.printStackTrace();
 			message = 1;
-			System.err.println("ERROR: You are trying to enter a duplicate value");
+			//System.err.println("ERROR: You are trying to enter a duplicate value");
 		}
 		System.out.println(message);
 		return message;

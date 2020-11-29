@@ -131,31 +131,16 @@ public class ModelController implements Runnable {
 	}
 	
 	/**
-	 * Searches the inventory and adds an item to it if no item with specified parameters found.
-	 * If item already exists, then increases the item's quantity only (other args are ignored).
+	 * Adds an item to database
 	 * 
-	 * @param itemType type of the item to add.
-	 * @param itemId id number of the item to add.
-	 * @param itemName name of the item to add.
-	 * @param itemQty quantity of the item to add (for existing items, this is used to increase the actual quantity by).
-	 * @param itemPrice price of the item to add.
-	 * @param itemSupId supplier id number of the item to add.
-	 * @param itemPower power of the item (if not electrical, should be 0)
+	 * @param itemInfo the item to add into db.
 	 */
-	public int addItem(String itemType, int itemId, String itemName, int itemQty, double itemPrice, int itemSupId, int itemPower) {
-		String[] newRow = new String[7];
-		
-		newRow[0] = itemType;
-		newRow[1] = Integer.toString(itemId);
-		newRow[2] = itemName;
-		newRow[3] = Integer.toString(itemQty);
-		newRow[4] = Double.toString(itemPrice);
-		newRow[5] = Integer.toString(itemSupId);
-		newRow[6] = Integer.toString(itemPower);
-				
-		int result = dbControl.addRow("tooltable", newRow);
+	public int addItem(String[] itemInfo) {
+
+		int result = dbControl.addRow("tooltable", itemInfo);
 		getNewInventory(); //get updated inventory
 		return result;
+		
 	}
 	
 	public int deleteItem(int itemId) {
@@ -292,7 +277,7 @@ public class ModelController implements Runnable {
 			
 				/*============== SEARCHBYNAME ==============*/
 			} else if (message.contains("SEARCHBYNAME%")) {
-				message.replace("SEARCHBYNAME%", ""); //remove message header
+				message = message.replace("SEARCHBYNAME%", ""); //remove message header
 				
 				//get result from inventory
 				getNewInventory();
@@ -308,7 +293,7 @@ public class ModelController implements Runnable {
 				
 				/*============== SEARCHBYID ==============*/
 			} else if (message.contains("SEARCHBYID%")) {
-				message.replace("SEARCHBYID%", ""); //remove message header
+				message = message.replace("SEARCHBYID%", ""); //remove message header
 				
 				//get result from inventory
 				getNewInventory();
@@ -324,21 +309,13 @@ public class ModelController implements Runnable {
 				
 				/*============== ADDITEM ==============*/
 			} else if (message.contains("ADDITEM%")) {
-				message.replace("ADDITEM%", ""); //remove message header
+				message = message.replace("ADDITEM%", ""); //remove message header
 				
 				//parse incoming message to item related info
 				String[] itemInfo = message.split("%");
 				
-				String itemType = itemInfo[0];
-				int itemId = Integer.parseInt(itemInfo[1]);
-				String itemName = itemInfo[2];
-				int itemQty = Integer.parseInt(itemInfo[3]);
-				double itemPrice = Double.parseDouble(itemInfo[4]);
-				int itemSupId = Integer.parseInt(itemInfo[5]);
-				int itemPower = Integer.parseInt(itemInfo[6]);
-				
 				// add item to the db
-				addItem(itemType, itemId, itemName, itemQty, itemPrice, itemSupId, itemPower);
+				addItem(itemInfo);
 				
 				//send back the updated inventory to the client
 				try {
@@ -350,7 +327,7 @@ public class ModelController implements Runnable {
 			
 				/*============== REDUCEITEM ==============*/
 			} else if (message.contains("REDUCEITEM%")) {
-				message.replace("REDUCEITEM%", ""); //remove message header
+				message = message.replace("REDUCEITEM%", ""); //remove message header
 				
 				//parse incoming message to item related info
 				String[] itemInfo = message.split("%");
@@ -359,6 +336,22 @@ public class ModelController implements Runnable {
 				
 				// reduce item from db
 				reduceItem(itemId, itemQty);
+				
+				//send back the updated inventory to the client
+				try {
+					socketOut.writeObject(getInventory());
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+			} else if (message.contains("DELETEITEM%")) {
+				message = message.replace("DELETEITEM%", ""); //remove message header
+				
+				int itemId = Integer.parseInt(message);
+				
+				// delete item from db
+				deleteItem(itemId);
 				
 				//send back the updated inventory to the client
 				try {
@@ -380,7 +373,7 @@ public class ModelController implements Runnable {
 				
 				/*============== EDIT CUSTOMER ==============*/
 			} else if (message.contains("EDITCUSTOMER%")) {
-				message.replace("EDITCUSTOMER%", ""); //remove message header
+				message = message.replace("EDITCUSTOMER%", ""); //remove message header
 				
 				//parse incoming message to customer related info
 				String[] customerInfo = message.split("%");
@@ -396,7 +389,7 @@ public class ModelController implements Runnable {
 				
 				/*============== DELETE CUSTOMER ==============*/
 			} else if (message.contains("DELETECUSTOMER%")) {
-				message.replace("DELETECUSTOMER%", ""); //remove message header
+				message = message.replace("DELETECUSTOMER%", ""); //remove message header
 				
 				deleteCustomer(Integer.parseInt(message));
 				

@@ -204,11 +204,11 @@ public abstract class Item implements Serializable {
 	 */
 	@Override
 	public String toString() {
-		String output = getItemType() + "%" +
-						getId() + "%" +
-						getName() + "%" +
-						getQty() + "%" +
-						getPrice() + "%" +
+		String output = getItemType() + " " +
+						getId() + " " +
+						getName() + " " +
+						getQty() + " " +
+						getPrice() + " " +
 						getSupplier().getId();
 		return output;
 	}

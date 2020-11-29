@@ -16,10 +16,10 @@ public class SupplierList implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	private ArrayList <Supplier> suppliers;
-//	private Supplier supplier;
+
 	
-	public SupplierList (ArrayList <Supplier> supplierList) {
-		this.setSupplierList(supplierList);
+	public SupplierList () {
+		this.suppliers = new ArrayList <Supplier>();
 	}
 
 	public int getNumberOfSuppliers() {

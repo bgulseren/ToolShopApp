@@ -26,6 +26,6 @@ public class ElectricalItem extends Item implements Serializable {
 	
 	@Override
 	public String toString() {
-		return super.toString() + "%" + getPower();
+		return super.toString() + " " + getPower() + "kW";
 	}
 }

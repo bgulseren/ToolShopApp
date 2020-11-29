@@ -29,7 +29,6 @@ public class Inventory implements Serializable {
 	/** the selected item (ie result of a search)*/
 	private Item selectedItem;
 	
-	//private ModelController model;
 	
 	/**
 	 * Default Inventory Class Constructor
@@ -38,15 +37,9 @@ public class Inventory implements Serializable {
 	public Inventory() {
 		selectedItem = null;
 		
-		this.items = new ArrayList<Item>(); //instantiate the member variables
-		Supplier sup1 = new InterntlSupplier(0, "sup1", "blah", "bleh", 1);
-		Supplier sup2 = new InterntlSupplier(1, "sup2", "blaj", "blej", 2);
-		
-		ArrayList<Supplier> sups = new ArrayList<Supplier>();
-		sups.add(sup1);
-		sups.add(sup2);
-		
-		this.suppliers = new SupplierList(sups);
+		this.order = null;
+		this.items = new ArrayList<Item>();
+		this.suppliers = new SupplierList();
 	}
 	
 	/**
@@ -171,7 +164,15 @@ public class Inventory implements Serializable {
 		Item foundItem = this.searchItem(itemId);
 		
 		if (foundItem != null) {
-			foundItem.reduceQty(itemQty); //reduce item quantity 
+			
+			boolean isNewOrderResulted = foundItem.reduceQty(itemQty); //reduce item quantity 
+			
+			if (isNewOrderResulted) {
+				if (order == null) {
+					order = new Order();
+				}
+				order.addOrderLine(foundItem.getOrderLine());
+			}
 		}
 		
 		return foundItem;
