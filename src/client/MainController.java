@@ -100,9 +100,8 @@ public class MainController {
 //		System.out.println(theApp.getInventory().toString());
 		
 		// ==== Test case === //
-		System.out.println("Test: Deleting item id 1160");
-		theApp.invView.itemId = 1060;
-		theApp.getClientController().deleteItemFromSrv();
+		System.out.println("Test: Deleting item id 1005");
+		theApp.getClientController().deleteItemFromSrv(1005);
 		System.out.println(theApp.getInventory().toString());
 		
 		// ==== Test case === //

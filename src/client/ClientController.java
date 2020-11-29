@@ -116,6 +116,14 @@ public class ClientController {
 		readInventoryFromSrv();
 	}
 	
+	public void deleteItemFromSrv (int itemId) throws ClassNotFoundException, IOException {
+		connect();
+		
+		String messageOut = "DELETEITEM" + "%" + itemId;
+		socketOut.writeObject(messageOut);
+		readInventoryFromSrv();
+	}
+	
 	public void addItemFromSrv () throws ClassNotFoundException, IOException {
 		connect();
 		
