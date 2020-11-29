@@ -8,6 +8,7 @@
 package inventoryModel;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 
 
 public class Inventory implements Serializable {
@@ -154,8 +155,8 @@ public class Inventory implements Serializable {
 	
 	/**
 	 * Reduces quantity of the specified item from the inventory.
-	 * If item reduction results an order line, then captures it into
-	 * the order lines array of the inventory.
+	 * If item reduction results an order line, then assigns it to the
+	 * active order.
 	 * 
 	 * @param itemId id number of the item to reduce.
 	 * @param itemQty quantity to reduce from the item.
@@ -177,19 +178,12 @@ public class Inventory implements Serializable {
 		
 		return foundItem;
 	}
-	
+
 	/**
-	 * Creates a new order and assigns order lines from the items into the active order.
-	 * Clears the order lines from the items as they are passed into an order.
+	 * Sets the order coming from externally (ie db).
 	 */
-	public void createOrder() {
-		if (this.order == null) {
-			this.order = new Order();
-			for(Item i : items) {
-				this.order.addOrderLine(i.getOrderLine());
-				i.clearOrderLine();
-			}
-		}
+	public void setOrder(int orderId, java.sql.Date orderDate) {
+		this.order = new Order(orderId, orderDate);
 	}
 	
 	/**

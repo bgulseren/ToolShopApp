@@ -226,6 +226,10 @@ public class Database {
 				updateQuery = "DELETE FROM customertable WHERE ID=?";
 			}
 			
+			String sql_selectDB = "USE " + databaseName;
+			PreparedStatement pStat_selectDB = jdbc_connection.prepareStatement(sql_selectDB);
+			pStat_selectDB.execute();
+			
 			PreparedStatement pStat = jdbc_connection.prepareStatement(updateQuery);
 
 			pStat.setInt(1, id);

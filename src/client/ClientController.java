@@ -197,6 +197,15 @@ public class ClientController {
 		readCustomersFromSrv();
 	}
 	
+	// Overloaded version
+	public void deleteCustomerFromSrv (int customerId) throws ClassNotFoundException, IOException {
+		connect();
+		
+		String messageOut = "DELETECUSTOMER" + "%" + customerId;
+		socketOut.writeObject(messageOut);
+		readCustomersFromSrv();
+	}
+	
 	
 	private void readCustomersFromSrv() throws ClassNotFoundException, IOException {
 		// receiving the new customers model from server

@@ -168,11 +168,11 @@ public abstract class Item implements Serializable {
 	}
 	
 	/**
-	 * Clears the order line associated with the item.
+	 * Sets the order line for this item
 	 * 
 	 */
-	public void clearOrderLine() {
-		this.orderLine = null;
+	public void setOrderLine(OrderLine ol) {
+		this.orderLine = ol;
 	}
 	
 	/**
@@ -181,7 +181,7 @@ public abstract class Item implements Serializable {
 	 * then generates an order line for the item.
 	 * 
 	 * @param qty quantity to be reduced for the item.
-	 * @return result of a creation of an orderline (true, reduction caused an orderline, false, no orderline).
+	 * @return result of a creation of an orderline (true, reduction caused a new orderline, false, no orderline).
 	 */
 	public boolean reduceQty(int qty) {
 		if (this.qty >= qty && qty > 0) {

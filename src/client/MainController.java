@@ -75,15 +75,44 @@ public class MainController {
 		
 		MainController theApp = new MainController();
 		
-		//testing//
-		System.out.println("Testing getting the inventory from server (will trigger the DB to create a new model first and then passed to the client side");
+		// ==== Test case === //
+		System.out.println("Test: Read inventory from server");
 		theApp.getClientController().getInventoryFromSrv();
-		
-		//testing - get new list//
 		System.out.println(theApp.getInventory().toString());
 		
-		theApp.getClientController().getCustomersFromSrv();
+		// ==== Test case === //
+		System.out.println("Test: Reducing item 1005 Twinkies by 1");
+		theApp.invView.itemId = 1005;
+		theApp.invView.itemQty = 1;
+		theApp.getClientController().reduceItemFromSrv();
+		System.out.println(theApp.getInventory().toString());
 		
+		// ==== Test case === //
+//		System.out.println("Test: Adding item 1160 Twinkies Extended by 60");
+//		theApp.invView.itemId = 1160;
+//		theApp.invView.itemQty = 60;
+//		theApp.invView.itemName = "Twinkies Extended";
+//		theApp.invView.itemPrice = 59.99;
+//		theApp.invView.itemType = "nonelectric";
+//		theApp.invView.itemSupplierId = 8015;
+		
+//		theApp.getClientController().addItemFromSrv();
+//		System.out.println(theApp.getInventory().toString());
+		
+		// ==== Test case === //
+		System.out.println("Test: Deleting item id 1160");
+		theApp.invView.itemId = 1060;
+		theApp.getClientController().deleteItemFromSrv();
+		System.out.println(theApp.getInventory().toString());
+		
+		// ==== Test case === //
+		System.out.println("Test: Read customer list from server");
+		theApp.getClientController().getCustomersFromSrv();
+		System.out.println(theApp.getCustomerList().toString());
+		
+		// ==== Test case === //
+		System.out.println("Test: Delete customer 8009 Jacob from server");
+		theApp.getClientController().deleteCustomerFromSrv(8009);
 		System.out.println(theApp.getCustomerList().toString());
 		
 	}

@@ -21,7 +21,7 @@ public class RegularItem extends Item implements Serializable {
 	
 	@Override
 	public String toString() {
-		return super.toString() + "%" + "0";
+		return super.toString();
 	}
 
 }

@@ -1,7 +1,6 @@
 package inventoryModel;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Random;
 
 /**
@@ -23,7 +22,7 @@ public class Order implements Serializable {
 	private int id;
 	
 	/** the date stamp of the order */
-	private Date date;
+	private java.sql.Date date;
 	
 	/** the order lines associated with the order */
 	private ArrayList<OrderLine> orderLines;
@@ -33,12 +32,22 @@ public class Order implements Serializable {
 	 * @param ol an ArrayList of OrderLine can be passed to set the member order lines for this object.
 	 */
 	public Order() {
+		
+		this.orderLines = new ArrayList<OrderLine>();
+		
 		Random random = new Random();
 		this.id = random.nextInt(99999); //create a 5 digit random number
 		
-		Date today = new Date();
-		this.date = today; //add today's time stamp to the order
+		java.util.Date today = new java.util.Date();
+		java.sql.Date sqlDate = new java.sql.Date(today.getTime());
 		
+		this.date = sqlDate; //add today's time stamp to the order
+		
+	}
+	
+	public Order(int orderId, java.sql.Date orderDate) {
+		this.id = orderId;
+		this.date = orderDate;
 	}
 	
 	
@@ -78,7 +87,7 @@ public class Order implements Serializable {
 	 * Returns the date for this order.
 	 * @return date for this order.
 	 */
-	public Date getDate() {
+	public java.sql.Date getDate() {
 		return date;
 	}
 	

@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
 import customerModel.CustomerList;
 import inventoryModel.*;
@@ -59,7 +61,9 @@ public class ModelController implements Runnable {
 		
 		loadSuppliersTable(); // Get the suppliers table from db into model
 		loadItemsTable(); // Get items table from db into model
-		loadOrderTable(); // Get orderlines table from db into model
+		loadOrdersTable(); // Get last order from db into model
+		loadOrderlinesTable(); // Get orderlines table from db into model
+		
 	}
 	
 	public void loadSuppliersTable() {
@@ -105,7 +109,37 @@ public class ModelController implements Runnable {
 		}
 	}
 	
-	public void loadOrderTable() {
+	public void loadOrdersTable() {
+		String[][] ordersTable = dbControl.extractTable("ordertable");
+		
+		if (ordersTable == null) {
+			System.out.println("No orders found in db");
+			return;
+		}
+		
+		//now check ordertable to be associated with the inventory (only get the one for today)
+		for (int i = 0; i < ordersTable.length; i++) {
+			
+			int orderId = Integer.parseInt(ordersTable[i][0]);
+			
+			try {
+				java.util.Date orderDate = new SimpleDateFormat("MM-dd-yyyy").parse(ordersTable[i][1]);
+				java.util.Date today = new java.util.Date();
+
+				if (today.compareTo(orderDate) == 0) {
+					java.sql.Date sqlDate = new java.sql.Date(orderDate.getTime());
+					
+					this.inventory.setOrder(orderId, sqlDate);
+					return;
+				}
+				
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public void loadOrderlinesTable() {
 		String[][] ordersTable = dbControl.extractTable("orderlinetable");
 		
 		if (ordersTable == null) {
@@ -116,19 +150,35 @@ public class ModelController implements Runnable {
 		//now check orderlines to be associated to item
 		for (int i = 0; i < ordersTable.length; i++) {
 			
-			//int orderId = Integer.parseInt(ordersTable[i][0]);
+			int orderId = Integer.parseInt(ordersTable[i][0]);
 			int itemId = Integer.parseInt(ordersTable[i][1]);
 			int itemQty = Integer.parseInt(ordersTable[i][2]);
-			//int supId = Integer.parseInt(ordersTable[i][3]);
+			int supId = Integer.parseInt(ordersTable[i][3]);
 			
 			// find the matching item in inventory and create orderline in that item
 			
-			Item foundItem = this.inventory.searchItem(itemId);
-			if (foundItem != null) {
-				foundItem.createOrderLine(itemQty);
+			if (this.inventory.getOrder() != null) {
+				if (orderId == this.inventory.getOrder().getId()) {
+					
+					Item foundItem = this.inventory.searchItem(itemId);
+					
+					if (foundItem != null) { //check if item still exists in the inventory
+						OrderLine ol = new OrderLine();
+						ol.setId(itemId);
+						ol.setQty(itemQty);
+						ol.setSupplierId(supId);
+						ol.setName(foundItem.getName());
+						ol.setSupplierName(foundItem.getSupplier().getName());
+						
+						foundItem.setOrderLine(ol);
+						this.inventory.getOrder().addOrderLine(ol);
+					}
+				}
 			}
+
 		}
 	}
+	
 	
 	/**
 	 * Adds an item to database
@@ -196,19 +246,27 @@ public class ModelController implements Runnable {
 		if (item != null) {
 			getDb().updateQuant("tooltable", item.getId(), item.getQty());
 			
-			if (item.getOrderLine() != null) {
-				String[] newRow = new String[4];
+			//update item on the db
+			if (inventory.getOrder() != null) {
 				
-				newRow[0] = Integer.toString(item.getOrderLine().getId());
-				newRow[1] = Integer.toString(item.getOrderLine().getQty());
-				newRow[2] = item.getOrderLine().getName();
-				newRow[3] = Integer.toString(item.getOrderLine().getSupplierId());
+				String[] order = new String[2];
+				order[0] = Integer.toString(inventory.getOrder().getId());
+				order[1] = inventory.getOrder().getDate().toString();
+				getDb().addRow("ordertable", order);
 				
-				getDb().addRow("orderlinetable", newRow);
+				if (item.getOrderLine() != null) {
+					String[] newRow = new String[4];
+					
+					newRow[0] = Integer.toString(inventory.getOrder().getId());
+					newRow[1] = Integer.toString(item.getOrderLine().getId());
+					newRow[2] = Integer.toString(item.getOrderLine().getQty());
+					newRow[3] = Integer.toString(item.getOrderLine().getSupplierId());
+					
+					getDb().addRow("orderlinetable", newRow);
+				}
 			}
+			
 		}
-		//update item on the db
-		
 		
 		getNewInventory(); //get latest inventory info from db into model
 	}
@@ -257,14 +315,12 @@ public class ModelController implements Runnable {
 			try {
 				message = (String) socketIn.readObject();
 			} catch (ClassNotFoundException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			} catch (IOException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 			
-				/*============== UPDATE ==============*/
+				/*============== UPDATE ITEMS ==============*/
 			if (message.contains("UPDATEITEMS%")) {
 
 				getNewInventory();
@@ -275,7 +331,7 @@ public class ModelController implements Runnable {
 					e.printStackTrace();
 				}
 			
-				/*============== SEARCHBYNAME ==============*/
+				/*============== SEARCH ITEM BY NAME ==============*/
 			} else if (message.contains("SEARCHBYNAME%")) {
 				message = message.replace("SEARCHBYNAME%", ""); //remove message header
 				
@@ -291,7 +347,7 @@ public class ModelController implements Runnable {
 					e.printStackTrace();
 				}
 				
-				/*============== SEARCHBYID ==============*/
+				/*============== SEARCH ITEM BY ID ==============*/
 			} else if (message.contains("SEARCHBYID%")) {
 				message = message.replace("SEARCHBYID%", ""); //remove message header
 				
@@ -307,7 +363,7 @@ public class ModelController implements Runnable {
 					e.printStackTrace();
 				}
 				
-				/*============== ADDITEM ==============*/
+				/*============== ADD ITEM ==============*/
 			} else if (message.contains("ADDITEM%")) {
 				message = message.replace("ADDITEM%", ""); //remove message header
 				
@@ -325,7 +381,7 @@ public class ModelController implements Runnable {
 					e.printStackTrace();
 				}
 			
-				/*============== REDUCEITEM ==============*/
+				/*============== REDUCE ITEM ==============*/
 			} else if (message.contains("REDUCEITEM%")) {
 				message = message.replace("REDUCEITEM%", ""); //remove message header
 				
@@ -345,6 +401,7 @@ public class ModelController implements Runnable {
 					e.printStackTrace();
 				}
 				
+				/*============== DELETE ITEM ==============*/
 			} else if (message.contains("DELETEITEM%")) {
 				message = message.replace("DELETEITEM%", ""); //remove message header
 				
@@ -399,6 +456,8 @@ public class ModelController implements Runnable {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+				
+				
 				
 				/*============== EXIT ==============*/
 			} else if (message.contains("DISCONNECT%")) {
