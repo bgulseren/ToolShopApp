@@ -69,8 +69,7 @@ public class InvViewListener implements ActionListener{
 		int row = iv.getResultsTable().getSelectedRow();
 		if(row != -1) {
 			String selectedID = iv.getResultsTable().getModel().getValueAt(row,0).toString();
-			String currentQuantity = iv.getResultsTable().getModel().getValueAt(row,2).toString();
-			ivCtr.decreaseQuantity(selectedID, currentQuantity);
+			ivCtr.decreaseQuantity(selectedID);
 		}
 	}
 	

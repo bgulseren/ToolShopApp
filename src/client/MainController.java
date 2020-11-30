@@ -15,7 +15,6 @@ public class MainController {
 	private ClientController clCnt;
 	private InvViewController IVC;
 	private CustViewController CVC;
-	private String[][] searchResult;
 	
 	public MainController(InvViewController IVC, CustViewController CVC) throws IOException {
 		//Connection controller
@@ -36,15 +35,7 @@ public class MainController {
 		return IVC;
 	}
 	
-	public InvViewController getInvView() {
-		return IVC;
-	}
-	
 	public CustViewController getCvc() {
-		return CVC;
-	}
-	
-	public CustViewController getCusView() {
 		return CVC;
 	}
 	
@@ -71,37 +62,104 @@ public class MainController {
 	public void setClientController(ClientController client) {
 		this.clCnt = client;
 	}
-	
-	
-	public String[][] getSearchResult(){
-		return searchResult;
-	}	
-	
-	public String[][] searchTable(String[][] databaseQuery, String searchText, int selCol){
-		int rows = 0;
-		for(int r = 0; r < databaseQuery.length; r++) {
-			if(databaseQuery[r][selCol].contentEquals(searchText)) {
-				rows += 1;
-			}
-		}
-		String[][] search = new String[rows][7];
-		int row = 0;
-		
-		for(int r = 0; r < databaseQuery.length; r++) {
-			if(databaseQuery[r][selCol].contentEquals(searchText)) {
-				search[row][0] = databaseQuery[r][0];
-				search[row][1] = databaseQuery[r][1];
-				search[row][2] = databaseQuery[r][2];
-				search[row][3] = databaseQuery[r][3];
-				search[row][4] = databaseQuery[r][4];
-				search[row][5] = databaseQuery[r][5];
-				search[row][6] = databaseQuery[r][6];
-				row += 1;
-			}
-		}
-		return search;
-	}
 
+
+	
+	public void displayAllItems() {
+		try {
+			getClientController().getInventoryFromSrv();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		String[][] invDatabaseQuery = getInventory().listAllItems();
+		getIvc().updateView(invDatabaseQuery);
+	}
+	
+	public void searchItem(String searchKey, int colNum) {
+		try {
+			getClientController().getInventoryFromSrv();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		String[][] searchResult = getInventory().search(searchKey, colNum);
+		getIvc().updateView(searchResult);
+	}
+	
+
+	
+	public void decreaseItemQuantity(String id, int qty) {
+		try {
+			getClientController().reduceItemFromSrv(id, qty);
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		String[][] invDatabaseQuery = getInventory().listAllItems();
+		getIvc().updateView(invDatabaseQuery);
+	}
+	
+	
+	public void searchCustomer(String searchKey, int colNum) {
+		try {
+			getClientController().getCustomersFromSrv();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		String[][] searchResult = getCustomerList().search(searchKey, colNum);
+		getCvc().updateView(searchResult);
+	}
+	
+	public void addCustomer(String[] customerInfo) {
+		try {
+			getClientController().addCustomerFromSrv(customerInfo);
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		String[][] custDatabaseQuery = getCustomerList().listAllCustomers();
+		getCvc().updateView(custDatabaseQuery);
+	}
+	
+	public void editCustomerInfo(String[] customerInfo) {
+		try {
+			getClientController().editCustomerFromSrv(customerInfo);
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		String[][] custDatabaseQuery = getCustomerList().listAllCustomers();
+		getCvc().updateView(custDatabaseQuery);
+	}
+	
+	public void deleteCustomer(String customerId) {
+		try {
+			getClientController().deleteCustomerFromSrv(customerId);
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		String[][] custDatabaseQuery = getCustomerList().listAllCustomers();
+		getCvc().updateView(custDatabaseQuery);
+	}
+	
+	public void activateInventoryView() {
+		getIvc().getIv().frame.setVisible(true);
+	}
+	
+	public void activateCustomerView() {
+		getCvc().getCv().frame.setVisible(true);
+	}
 	
 	public void printOrder() {
 		
@@ -130,107 +188,6 @@ public class MainController {
         }
 	}
 	
-	public void displayAllItems() {
-		try {
-			getClientController().getInventoryFromSrv();
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		String[][] invDatabaseQuery = getInventory().listAllItems();
-		getIvc().updateView(invDatabaseQuery);
-	}
-	
-	public void searchItem(String searchKey, int colNum) {
-		try {
-			getClientController().getInventoryFromSrv();
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		String[][] invDatabaseQuery = getInventory().listAllItems();
-		String[][] searchResult = searchTable(invDatabaseQuery, searchKey, colNum);
-		getIvc().updateView(searchResult);
-	}
-	
-
-	
-	public void decreaseItemQuantity() {
-		try {
-			getClientController().reduceItemFromSrv(getIvc().getId(), 1);
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		String[][] invDatabaseQuery = getInventory().listAllItems();
-		getIvc().updateView(invDatabaseQuery);
-	}
-	
-	
-	public void searchCustomer(String searchKey, int colNum) {
-		try {
-			getClientController().getCustomersFromSrv();
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		String[][] custDatabaseQuery = getCustomerList().listAllCustomers();
-		String[][] searchResult = searchTable(custDatabaseQuery, searchKey, colNum);
-		getCvc().updateView(searchResult);
-	}
-	
-	
-	public void editCustomerInfo(String searchKey) {
-		try {
-			getClientController().editCustomerFromSrv();
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		String[][] custDatabaseQuery = getCustomerList().listAllCustomers();
-		String[][] searchResult = searchTable(custDatabaseQuery, searchKey, 0);
-		getCvc().updateView(searchResult);
-	}
-	
-	public void deleteCustomer() {
-		String customerId = getCvc().getId();
-		try {
-			getClientController().deleteCustomerFromSrv(customerId);
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		String[][] custDatabaseQuery = getCustomerList().listAllCustomers();
-		getCvc().updateView(custDatabaseQuery);
-	}
-	
-	public void addCustomer() {
-		try {
-			getClientController().addCustomerFromSrv();
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		String[][] custDatabaseQuery = getCustomerList().listAllCustomers();
-		getCvc().updateView(custDatabaseQuery);
-	}
-	
-	public void activateInventoryView() {
-		getIvc().getIv().frame.setVisible(true);
-	}
-	
-	public void activateCustomerView() {
-		getCvc().getCv().frame.setVisible(true);
-	}
-	
 	//*****************Main*******************//
 	public static void main(String[] args) throws IOException, ClassNotFoundException {
 		
@@ -242,7 +199,7 @@ public class MainController {
 
 		while(true) {
 			
-		}		
+		}
 	}
 }	
 

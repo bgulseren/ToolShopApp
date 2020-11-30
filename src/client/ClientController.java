@@ -76,7 +76,7 @@ public class ClientController {
 	public void searchItemByNameFromSrv () throws ClassNotFoundException, IOException {
 		connect();
 		
-		String itemName = mainCtr.getInvView().getName();
+		String itemName = mainCtr.getIvc().getName();
 		
 		String messageOut = "SEARCHBYNAME" + "%" + itemName;
 		socketOut.writeObject(messageOut);
@@ -86,7 +86,7 @@ public class ClientController {
 	public void searchItemByIdFromSrv () throws ClassNotFoundException, IOException {
 		connect();
 		
-		String itemId = mainCtr.getInvView().getId();
+		String itemId = mainCtr.getIvc().getId();
 		
 		String messageOut = "SEARCHBYID" + "%" + itemId;
 		socketOut.writeObject(messageOut);
@@ -101,15 +101,6 @@ public class ClientController {
 		readInventoryFromSrv();
 	}
 	
-	public void deleteItemFromSrv () throws ClassNotFoundException, IOException {
-		connect();
-		
-		String itemId = mainCtr.getInvView().getId();
-		
-		String messageOut = "DELETEITEM" + "%" + itemId;
-		socketOut.writeObject(messageOut);
-		readInventoryFromSrv();
-	}
 	
 	public void deleteItemFromSrv (int itemId) throws ClassNotFoundException, IOException {
 		connect();
@@ -166,65 +157,28 @@ public class ClientController {
 		readCustomersFromSrv();
 	}
 	
-	public void addCustomerFromSrv () throws ClassNotFoundException, IOException {
+	public void addCustomerFromSrv (String[] customerInfo) throws ClassNotFoundException, IOException {
 		connect();
-		
-		String cusId = mainCtr.getCvc().getId();
-		String cusFName = mainCtr.getCvc().getfName();
-		String cusLName = mainCtr.getCvc().getlName();
-		String cusAddress = mainCtr.getCvc().getAddress();
-		String cusPCode = mainCtr.getCvc().getPostalCode();
-		String cusPhone = mainCtr.getCvc().getPhoneNo();
-		String cusType = mainCtr.getCvc().getType();
-		
-		String messageOut = "ADDCUSTOMER" + "%" +
-				cusId + "%" +
-				cusType + "%" +
-				cusFName + "%" +
-				cusLName + "%" +
-				cusAddress + "%" +
-				cusPCode + "%" +
-				cusPhone;
+		String messageOut = "ADDCUSTOMER%";
+		for (int i = 0; i < customerInfo.length; i++) {
+			messageOut += customerInfo[i] + "%";
+		}
 
 		socketOut.writeObject(messageOut);
 		readCustomersFromSrv();
 	}
 	
-	public void editCustomerFromSrv () throws ClassNotFoundException, IOException {
+	public void editCustomerFromSrv (String[] customerInfo) throws ClassNotFoundException, IOException {
 		connect();
-		
-		String id = mainCtr.getCusView().getId();
-		String type = mainCtr.getCusView().getType();
-		String fName = mainCtr.getCusView().getfName();
-		String lName = mainCtr.getCusView().getlName();
-		String addr = mainCtr.getCusView().getAddress();
-		String pCode = mainCtr.getCusView().getPostalCode();
-		String phone = mainCtr.getCusView().getPhoneNo();
-		
-		String messageOut = "EDITCUSTOMER" + "%" +
-							id + "%" +
-							type + "%" +
-							fName + "%" +
-							lName + "%" +
-							addr + "%" +
-							pCode + "%" +
-							phone;
+		String messageOut = "EDITCUSTOMER%";
+		for (int i = 0; i < customerInfo.length; i++) {
+			messageOut += customerInfo[i] + "%";
+		}
 		
 		socketOut.writeObject(messageOut);
 		readCustomersFromSrv();
 	}
 	
-	public void deleteCustomerFromSrv () throws ClassNotFoundException, IOException {
-		connect();
-		
-		String customerId = mainCtr.getCusView().getId();
-		
-		String messageOut = "DELETECUSTOMER" + "%" + customerId;
-		socketOut.writeObject(messageOut);
-		readCustomersFromSrv();
-	}
-	
-	// Overloaded version
 	public void deleteCustomerFromSrv (String customerId) throws ClassNotFoundException, IOException {
 		connect();
 		

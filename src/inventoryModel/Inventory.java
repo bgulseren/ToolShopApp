@@ -8,7 +8,6 @@
 package inventoryModel;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 
 public class Inventory implements Serializable {
@@ -196,8 +195,9 @@ public class Inventory implements Serializable {
 	}
 	
 	
-	/*
+	/**
 	 * list all items in the inventory into a 2d string array
+	 * 
 	 */
 	public String[][] listAllItems() {
 		int rows = getItems().size();
@@ -213,8 +213,37 @@ public class Inventory implements Serializable {
 			searchResult[r][6] = Integer.toString(getItems().get(r).getSupplier().getId());
 			
 		}
-		System.out.println(Arrays.deepToString(searchResult));
 		return searchResult;
+	}
+	
+	/**
+	 * list all items in the inventory which match the search criteria into a 2d string array
+	 * 
+	 */
+	public String[][] search(String searchText, int selCol){
+		String[][] table = listAllItems();
+		int rows = 0;
+		for(int r = 0; r < table.length; r++) {
+			if(table[r][selCol].contentEquals(searchText)) {
+				rows += 1;
+			}
+		}
+		String[][] search = new String[rows][7];
+		int row = 0;
+		
+		for(int r = 0; r < table.length; r++) {
+			if(table[r][selCol].contentEquals(searchText)) {
+				search[row][0] = table[r][0];
+				search[row][1] = table[r][1];
+				search[row][2] = table[r][2];
+				search[row][3] = table[r][3];
+				search[row][4] = table[r][4];
+				search[row][5] = table[r][5];
+				search[row][6] = table[r][6];
+				row += 1;
+			}
+		}
+		return search;
 	}
 	
 	

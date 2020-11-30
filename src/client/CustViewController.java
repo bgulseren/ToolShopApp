@@ -17,7 +17,6 @@ public class CustViewController {
 	private String postalCode;
 	private String phoneNo;
 	private String type;
-	private String searchKey;
 	
 	//For populating results table (JTable)
 	String[] columnNames = {"ID", "Type", "First Name", "Last Name", "Address", "Postal Code", "Phone #"};
@@ -49,41 +48,25 @@ public class CustViewController {
 	}
 
 	public void searchCustomer(String searchKey, String request) {
-		this.searchKey = searchKey;
 		if (request.contentEquals("BYID")) {
-			mc.searchCustomer(getSearchKey(), 0);
+			mc.searchCustomer(searchKey, 0);
 		} else if (request.contentEquals("BYNAME")) {
-			mc.searchCustomer(getSearchKey(), 3);
+			mc.searchCustomer(searchKey, 3);
 		} else if (request.contentEquals("BYTYPE")) {
-			mc.searchCustomer(getSearchKey(), 1);
+			mc.searchCustomer(searchKey, 1);
 		}
 	}
 	
-	public void editCustomer(String id, String fName, String lName, String address, String postalCode, String phoneNo, String type) {
-		this.id = id;
-		this.fName = fName;
-		this.lName = lName;
-		this.address = address;
-		this.postalCode = postalCode;
-		this.phoneNo = phoneNo;
-		this.type = type;
-		mc.editCustomerInfo(getSearchKey());
+	public void addCustomer(String[] customerInfo) {
+		mc.addCustomer(customerInfo);
+	}
+	
+	public void editCustomer(String[] customerInfo) {
+		mc.editCustomerInfo(customerInfo);
 	}
 	
 	public void deleteCustomer(String id) {
-		this.id = id;
-		mc.deleteCustomer();
-	}
-	
-	public void addCustomer(String id, String fName, String lName, String address, String postalCode, String phoneNo, String type) {
-		this.id = id;
-		this.fName = fName;
-		this.lName = lName;
-		this.address = address;
-		this.postalCode = postalCode;
-		this.phoneNo = phoneNo;
-		this.type = type;
-		mc.addCustomer();
+		mc.deleteCustomer(id);
 	}
 	
 	public String[][] getSearchResult(){
@@ -191,15 +174,5 @@ public class CustViewController {
 	public void setErrorMessage(String errorMessage) {
 		this.errorMessage = errorMessage;
 	}
-	
-
-	public String getSearchKey() {
-		return searchKey;
-	}
-
-
-	public void setSearchKey(String searchKey) {
-		this.searchKey = searchKey;
-	}	
 		
 }

@@ -225,7 +225,6 @@ public class ModelController implements Runnable {
 	}
 	
 	private int addCustomer(String[] customerInfo) {
-
 		int result = dbControl.addRow("customertable", customerInfo);
 		getNewCustomerList(); //get updated customers list
 		return result;

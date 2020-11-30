@@ -2,7 +2,6 @@ package customerModel;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class CustomerList implements Serializable {
 
@@ -11,10 +10,9 @@ public class CustomerList implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	private ArrayList<Customer> customerList;
-	//private String[][] searchResult;
 	
 	
-	/*
+	/**
 	 * construct CustomerList class
 	 * @Params: customerListFromDB - 2D String array from database export
 	 * calls the readCustomerFromDB() method which reads the 2D String array and returns an arrayList of customers
@@ -26,7 +24,7 @@ public class CustomerList implements Serializable {
 	}
 
 	
-	/*
+	/**
 	 * read customers data from database
 	 * @Params: customerListFromDB - 2D String array of customer data
 	 * 			this 2D String array can be obtained using the database controller extractTable() method
@@ -55,8 +53,8 @@ public class CustomerList implements Serializable {
 		return customerList;
 	}
 	
-	/*
-	 * list all customers
+	/**
+	 * lists all customers
 	 */
 	public String[][] listAllCustomers() {
 		int rows = customerList.size();
@@ -70,94 +68,41 @@ public class CustomerList implements Serializable {
 			searchResult[r][5] = customerList.get(r).getPostalCode();
 			searchResult[r][6] = customerList.get(r).getPhoneNo();
 		}
-		System.out.println(Arrays.deepToString(searchResult));
 		return searchResult;
 	}
 	
-	/*
-	 * search customers by last name
-	 * @Params: lastName - lastName of customer you are searching for
+	/**
+	 * Search customers by key and returns a table of matching results
+	 * @param key the key to be searched
+	 * @param r	the column number to be searched on
+	 * @return 2d array of strings which contain results matching the search criteria
 	 */
-	public String[][] searchByName(String lastName) {
+	public String[][] search(String key, int colNum) {
 		int rows = 0;
-		for(Customer c : customerList) {
-			if(c.getLastName().contentEquals(lastName)) {
-				rows+=1;
-			}	
+		String[][] table = listAllCustomers();
+		for(int r = 0; r < table.length; r++) {
+			if(table[r][colNum].contentEquals(key)) {
+				rows += 1;
+			}
 		}
-		String[][] searchResult = new String[rows][7];
-		int r = 0;
-		for(Customer c : customerList) {
-			if(c.getLastName().contentEquals(lastName)) {
-				searchResult[r][0] = Integer.toString(c.getID());
-				searchResult[r][1] = c.getFirstName();
-				searchResult[r][2] = c.getLastName();
-				searchResult[r][3] = c.getAddress();
-				searchResult[r][4] = c.getPostalCode();
-				searchResult[r][5] = c.getPhoneNo();
-				searchResult[r][6] = c.getType();
-				r+=1;
-			}	
+		String[][] results = new String[rows][7];
+		int row = 0;
+		
+		for(int r = 0; r < table.length; r++) {
+			if(table[r][colNum].contentEquals(key)) {
+				results[row][0] = table[r][0];
+				results[row][1] = table[r][1];
+				results[row][2] = table[r][2];
+				results[row][3] = table[r][3];
+				results[row][4] = table[r][4];
+				results[row][5] = table[r][5];
+				results[row][6] = table[r][6];
+				row += 1;
+			}
 		}
-		System.out.println(Arrays.deepToString(searchResult));
-		return searchResult;
+		return results;
 	}
 	
-	/*
-	 * search customers by ID
-	 */
-	public String[][] searchByID(String ID) {
-		int rows = 0;
-		for(Customer c : customerList) {
-			if(Integer.toString(c.getID()).contentEquals(ID)) {
-				rows+=1;
-			}	
-		}
-		String[][] searchResult = new String[rows][7];
-		int r = 0;
-		for(Customer c : customerList) {
-			if(Integer.toString(c.getID()).contentEquals(ID)) {
-				searchResult[r][0] = Integer.toString(c.getID());
-				searchResult[r][1] = c.getFirstName();
-				searchResult[r][2] = c.getLastName();
-				searchResult[r][3] = c.getAddress();
-				searchResult[r][4] = c.getPostalCode();
-				searchResult[r][5] = c.getPhoneNo();
-				searchResult[r][6] = c.getType();
-				r+=1;
-			}	
-		}
-		System.out.println(Arrays.deepToString(searchResult));
-		return searchResult;
-	}
-	
-	/*
-	 * search customers by type
-	 */
-	public String[][] searchByType(String type) {
-		int rows = 0;
-		for(Customer c : customerList) {
-			if(c.getType().contentEquals(type)) {
-				rows+=1;
-			}	
-		}
-		String[][] searchResult = new String[rows][7];
-		int r = 0;
-		for(Customer c : customerList) {
-			if(c.getType().contentEquals(type))  {
-				searchResult[r][0] = Integer.toString(c.getID());
-				searchResult[r][1] = c.getFirstName();
-				searchResult[r][2] = c.getLastName();
-				searchResult[r][3] = c.getAddress();
-				searchResult[r][4] = c.getPostalCode();
-				searchResult[r][5] = c.getPhoneNo();
-				searchResult[r][6] = c.getType();
-				r+=1;
-			}	
-		}
-		System.out.println(Arrays.deepToString(searchResult));
-		return searchResult;
-	}
 	
 	@Override
 	public String toString() {

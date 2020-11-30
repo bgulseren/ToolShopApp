@@ -13,20 +13,12 @@ public class InvViewController {
 	
 	private String id;
 	private String name;
-	private String currentQuantity;
-	private String searchKey;
 	
 	public InventoryView getIv() {
 		return iv;
 	}
 	
 	String[] columnNames = {"ID", "Name", "Quantity", "Price", "Type", "Power", "SupplierID"};
-	
-	
-	public InvViewListener getListerner() {
-		return il;
-	}
-	
 	
 	// true = fail
 	// false = success
@@ -47,11 +39,10 @@ public class InvViewController {
 	}
 	
 	public void searchTool(String searchKey, String request) {
-		this.searchKey = searchKey;
 		if (request.contentEquals("BYID")) {
-			mc.searchItem(getSearchKey(), 0);
+			mc.searchItem(searchKey, 0);
 		} else if (request.contentEquals("BYNAME")) {
-			mc.searchItem(getSearchKey(), 1);
+			mc.searchItem(searchKey, 1);
 		}
 	}
 	
@@ -59,11 +50,8 @@ public class InvViewController {
 		mc.displayAllItems();
 	}
 	
-	public void decreaseQuantity(String searchKey, String currentQuantity) {
-		this.searchKey = searchKey;
-		this.id = searchKey;
-		this.currentQuantity = currentQuantity;
-		mc.decreaseItemQuantity();
+	public void decreaseQuantity(String searchKey) {
+		mc.decreaseItemQuantity(searchKey, 1);
 	}
 	
 	public void displayOrder() {
@@ -102,20 +90,5 @@ public class InvViewController {
 		this.name = name;
 	}
 
-	public String getCurrentQuantity() {
-		return currentQuantity;
-	}
-
-	public void setCurrentQuantity(String currentQuantity) {
-		this.currentQuantity = currentQuantity;
-	}
-
-	public String getSearchKey() {
-		return searchKey;
-	}
-
-	public void setSearchKey(String searchKey) {
-		this.searchKey = searchKey;
-	}
 
 }

@@ -77,14 +77,10 @@ public class CustViewListener implements ActionListener{
 	//update selected row in database
 	public void updateRow() {
 		int row = cv.getResultsTable().getSelectedRow();
-		String selectedID = cv.getResultsTable().getModel().getValueAt(row, 0).toString();
-		String type = cv.getResultsTable().getModel().getValueAt(row, 1).toString();
-		String fName = cv.getResultsTable().getModel().getValueAt(row, 2).toString();
-		String lName = cv.getResultsTable().getModel().getValueAt(row, 3).toString();
-		String address = cv.getResultsTable().getModel().getValueAt(row, 4).toString();
-		String postalCode = cv.getResultsTable().getModel().getValueAt(row, 5).toString();
-		String phoneNo = cv.getResultsTable().getModel().getValueAt(row, 6).toString();
-		cvCtr.editCustomer(selectedID, fName, lName, address, postalCode, phoneNo, type);
+		String[] customerInfo = new String[7];
+		for (int i = 0; i < 7; i++)
+			customerInfo[i] = cv.getResultsTable().getModel().getValueAt(row, i).toString();
+		cvCtr.editCustomer(customerInfo);
 	}
 	
 	//delete selected row
@@ -96,14 +92,18 @@ public class CustViewListener implements ActionListener{
 		
 	//add row (customer)
 	public void addRow() {
-		String id = cv.getID().getText();
-		String fName = cv.getFName().getText();
-		String lName = cv.getLName().getText();
-		String address = cv.getAddress().getText();
-		String postalCode = cv.getPostalCode().getText();
-		String phoneNo = cv.getPhoneNo().getText();
-		String type = cv.getType().getText();
-		cvCtr.addCustomer(id, fName, lName, address, postalCode, phoneNo, type);
+		
+		String[] customerInfo = new String[7];
+		
+		customerInfo[0] = cv.getID().getText();
+		customerInfo[1] = cv.getType().getText();
+		customerInfo[2] = cv.getFName().getText();
+		customerInfo[3] = cv.getLName().getText();
+		customerInfo[4] = cv.getAddress().getText();
+		customerInfo[5] = cv.getPostalCode().getText();
+		customerInfo[6] = cv.getPhoneNo().getText();
+		
+		cvCtr.addCustomer(customerInfo);
 	}
 	
 	//switch to inventory management view
