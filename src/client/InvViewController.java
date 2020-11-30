@@ -9,7 +9,7 @@ public class InvViewController {
 	
 	private InventoryView iv;
 	private InvViewListener il;
-	private String request = "";
+	private MainController mc;
 	
 	private String id;
 	private String name;
@@ -42,34 +42,32 @@ public class InvViewController {
 		il.setInventoryView(this, iv);
 	}
 	
+	public void setMainController(MainController mc) {
+		this.mc = mc;
+	}
+	
 	public void searchTool(String searchKey, String request) {
 		this.searchKey = searchKey;
-		this.request = request;
+		if (request.contentEquals("BYID")) {
+			mc.searchItem(getSearchKey(), 0);
+		} else if (request.contentEquals("BYNAME")) {
+			mc.searchItem(getSearchKey(), 1);
+		}
 	}
 	
 	public void displayAllTools() {
-		this.request = "INVDISPLAYALL";
+		mc.displayAllItems();
 	}
 	
 	public void decreaseQuantity(String searchKey, String currentQuantity) {
 		this.searchKey = searchKey;
 		this.id = searchKey;
 		this.currentQuantity = currentQuantity;
-		this.request = "INVDECREASEQUANTITY";
+		mc.decreaseItemQuantity();
 	}
 	
 	public void displayOrder() {
-		this.request = "INVDISPLAYORDER";
-	}
-	
-	public String getRequest() {
-		String out = request;
-		clearRequest();
-		return out;
-	}
-	
-	public void clearRequest() {
-		request = "NONE";
+		mc.printOrder();
 	}
 	
 	public String[][] getSearchResult(){
@@ -77,7 +75,7 @@ public class InvViewController {
 	}
 	
 	public void displayCustMgmtView() {
-		request = "ACTIVATECUSTMGMT";
+		mc.activateCustomerView();
 	}
 	
 	/*

@@ -187,7 +187,7 @@ public class ClientController {
 				cusPhone;
 
 		socketOut.writeObject(messageOut);
-		readInventoryFromSrv();
+		readCustomersFromSrv();
 	}
 	
 	public void editCustomerFromSrv () throws ClassNotFoundException, IOException {

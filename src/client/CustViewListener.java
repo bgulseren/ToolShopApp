@@ -53,21 +53,19 @@ public class CustViewListener implements ActionListener{
 	}
 
 	/*
-	 * update gui text pane with list of customers
-	 * asks CustViewController to run search of customers based on user input (customer ID, last name, customer type)
+	 * update GUI text pane with list of customers
+	 * asks CustViewController to run search of customers
+	 * based on user input (customer ID, last name, customer type)
 	 */
 	public void searchCustomers(String searchText) {	
 		if(cv.getIdButton().isSelected()) {
-			cvCtr.searchCustomer(searchText, "CUSTSEARCHBYID");
-//			cv.getResultsTable().setModel(new DefaultTableModel(cvCtr.getSearchResult(), columnNames));
+			cvCtr.searchCustomer(searchText, "BYID");
 		}
 		else if(cv.getlastNameButton().isSelected()) {
-			cvCtr.searchCustomer(searchText, "CUSTSEARCHBYNAME");
-//			cv.getResultsTable().setModel(new DefaultTableModel(cvCtr.getSearchResult(), columnNames));
+			cvCtr.searchCustomer(searchText, "BYNAME");
 		}
 		else if(cv.getCustomerTypeButton().isSelected()) {
-			cvCtr.searchCustomer(searchText, "CUSTSEARCHBYTYPE");
-//			cv.getResultsTable().setModel(new DefaultTableModel(cvCtr.getSearchResult(), columnNames));
+			cvCtr.searchCustomer(searchText, "BYTYPE");
 		}
 	}
 	
@@ -89,7 +87,7 @@ public class CustViewListener implements ActionListener{
 		cvCtr.editCustomer(selectedID, fName, lName, address, postalCode, phoneNo, type);
 	}
 	
-	//delete selected reow
+	//delete selected row
 	public void deleteRow() {
 		int row = cv.getResultsTable().getSelectedRow();
 		String selectedID = cv.getResultsTable().getModel().getValueAt(row, 0).toString();
@@ -110,6 +108,7 @@ public class CustViewListener implements ActionListener{
 	
 	//switch to inventory management view
 	public void displayInvMgmtView() {
+		cv.frame.setVisible(false);
 		cvCtr.displayInvMgmtView();
 	}
 	

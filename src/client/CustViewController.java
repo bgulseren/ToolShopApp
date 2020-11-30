@@ -1,6 +1,5 @@
 package client;
 
-//import CustomerVIew from Views package
 import views.CustomerView;
 
 import javax.swing.table.DefaultTableModel;
@@ -9,7 +8,7 @@ public class CustViewController {
 	
 	private CustomerView cv;
 	private CustViewListener cl;
-	private String request = "";
+	private MainController mc;
 		
 	private String id;
 	private String fName;
@@ -19,14 +18,6 @@ public class CustViewController {
 	private String phoneNo;
 	private String type;
 	private String searchKey;
-	
-	public CustomerView getCv() {
-		return cv;
-	}
-	
-	public CustViewListener getCl() {
-		return cl;
-	}
 	
 	//For populating results table (JTable)
 	String[] columnNames = {"ID", "Type", "First Name", "Last Name", "Address", "Postal Code", "Phone #"};
@@ -39,17 +30,33 @@ public class CustViewController {
 
 	private String[][] searchResult;
 	
-	
 	public CustViewController() {
 		cl = new CustViewListener();
 		cv = new CustomerView(cl);
 		cl.setCustomerView(this, cv);
 	}
 	
+	public void setMainController(MainController mc) {
+		this.mc = mc;
+	}
+	
+	public CustomerView getCv() {
+		return cv;
+	}
+	
+	public CustViewListener getCl() {
+		return cl;
+	}
 
 	public void searchCustomer(String searchKey, String request) {
 		this.searchKey = searchKey;
-		this.request = request;
+		if (request.contentEquals("BYID")) {
+			mc.searchCustomer(getSearchKey(), 0);
+		} else if (request.contentEquals("BYNAME")) {
+			mc.searchCustomer(getSearchKey(), 3);
+		} else if (request.contentEquals("BYTYPE")) {
+			mc.searchCustomer(getSearchKey(), 1);
+		}
 	}
 	
 	public void editCustomer(String id, String fName, String lName, String address, String postalCode, String phoneNo, String type) {
@@ -60,13 +67,12 @@ public class CustViewController {
 		this.postalCode = postalCode;
 		this.phoneNo = phoneNo;
 		this.type = type;
-		System.out.println(fName + lName + address + postalCode + phoneNo +  type);
-		request = "CUSTUPDATE";
+		mc.editCustomerInfo(getSearchKey());
 	}
 	
 	public void deleteCustomer(String id) {
 		this.id = id;
-		request = "CUSTDELETE";
+		mc.deleteCustomer();
 	}
 	
 	public void addCustomer(String id, String fName, String lName, String address, String postalCode, String phoneNo, String type) {
@@ -77,18 +83,7 @@ public class CustViewController {
 		this.postalCode = postalCode;
 		this.phoneNo = phoneNo;
 		this.type = type;
-		System.out.println(fName + lName + address + postalCode + phoneNo +  type);
-		request = "CUSTADD";
-	}
-
-	public String getRequest() {
-		String out = request;
-		clearRequest();
-		return out;
-	}
-	
-	public void clearRequest() {
-		request = "NONE";
+		mc.addCustomer();
 	}
 	
 	public String[][] getSearchResult(){
@@ -96,7 +91,7 @@ public class CustViewController {
 	}
 	
 	public void displayInvMgmtView() {
-		request = "ACTIVATEINVMGMT";
+		mc.activateInventoryView();
 	}
 	
 	/*

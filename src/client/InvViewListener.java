@@ -11,12 +11,11 @@ public class InvViewListener implements ActionListener{
 	private InventoryView iv;
 	private InvViewController ivCtr;
 	private String searchKey;
-
-
 	
 	//for clearing search results table
 	DefaultTableModel emptyTableModel = new DefaultTableModel();
 	
+	//column headers
 	String[] columnNames = {"ID", "Name", "Quantity", "Price", "Type", "Power", "SupplierID"};
 	
 	
@@ -51,10 +50,10 @@ public class InvViewListener implements ActionListener{
 	 */
 	public void searchTools(String searchText) {	
 		if(iv.getSearchToolNameButton().isSelected()) {
-			ivCtr.searchTool(searchText, "INVSEARCHBYNAME");
+			ivCtr.searchTool(searchText, "BYNAME");
 		}
 		else if(iv.getSearchToolIdButton().isSelected()) {
-			ivCtr.searchTool(searchText, "INVSEARCHBYID");
+			ivCtr.searchTool(searchText, "BYID");
 		}
 	}
 	
@@ -81,6 +80,7 @@ public class InvViewListener implements ActionListener{
 	
 	//switch to inventory management view
 	public void displayCustMgmtView() {
+		iv.frame.setVisible(false);
 		ivCtr.displayCustMgmtView();
 	}
 	
