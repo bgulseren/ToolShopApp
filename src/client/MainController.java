@@ -163,7 +163,7 @@ public class MainController {
 	
 	public void printOrder() {
 		
-		File file = new File("reports/orderSummary.txt");
+		File file = new File("orderSummary.txt");
         
 		if (inventory.getOrder() != null) {
 	        String data = inventory.getOrder().toString();
@@ -184,7 +184,7 @@ public class MainController {
 	            e.printStackTrace();
 	        }
 		} else {
-        	System.out.println("No order to print!");
+        	System.out.println("No active order to print!");
         }
 	}
 	

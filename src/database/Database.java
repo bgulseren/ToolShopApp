@@ -32,7 +32,6 @@ public class Database {
 		try {
 			Class.forName("com.mysql.cj.jdbc.Driver");
 			jdbc_connection = DriverManager.getConnection(connectionInfo, login, password);
-			System.out.println("Connected to: " + connectionInfo + "\n");
 		}catch(SQLException e) {
 			e.printStackTrace();
 		}catch(Exception e) {
@@ -96,8 +95,6 @@ public class Database {
 	
 	/*
 	 * add new row to database table - works for any table
-	 * TODO: check if user is trying to add duplicate item
-	 * TODO: change to int return 
 	 */
 	
 	public int addRow(String tableName, String[] newRow) throws SQLException {
@@ -126,7 +123,6 @@ public class Database {
 			message = 1;
 			//System.err.println("ERROR: You are trying to enter a duplicate value");
 		}
-		System.out.println(message);
 		return message;
 	}
 	
@@ -141,8 +137,6 @@ public class Database {
 			String query = "UPDATE `inventorydb`.`" + tableName + 
 						   "` SET `QUANTITY` = '" + newQuantity +
 						   "' WHERE (`TOOLID` = '" + toolID + "')";
-			
-			System.out.println(query);
 			
 			PreparedStatement pStat = jdbc_connection.prepareStatement(query);
 			pStat.executeUpdate();

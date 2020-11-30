@@ -71,27 +71,7 @@ public class ClientController {
 		socketOut.writeObject(messageOut);
 		readInventoryFromSrv();
 	}
-	
-	
-	public void searchItemByNameFromSrv () throws ClassNotFoundException, IOException {
-		connect();
-		
-		String itemName = mainCtr.getIvc().getName();
-		
-		String messageOut = "SEARCHBYNAME" + "%" + itemName;
-		socketOut.writeObject(messageOut);
-		readInventoryFromSrv();
-	}
-	
-	public void searchItemByIdFromSrv () throws ClassNotFoundException, IOException {
-		connect();
-		
-		String itemId = mainCtr.getIvc().getId();
-		
-		String messageOut = "SEARCHBYID" + "%" + itemId;
-		socketOut.writeObject(messageOut);
-		readInventoryFromSrv();
-	}
+
 	
 	public void reduceItemFromSrv (String itemId, int itemQtyToReduce) throws ClassNotFoundException, IOException {
 		connect();
@@ -193,7 +173,7 @@ public class ClientController {
 		CustomerList customers = (CustomerList) socketIn.readObject();
         this.mainCtr.setCustomerList(customers);
         
-        System.out.println("Received new customers from server");
+        System.out.println("Received new customers list from server");
         
 		disconnect();
 	}

@@ -165,13 +165,13 @@ public class Inventory implements Serializable {
 		
 		if (foundItem != null) {
 			
-			boolean isNewOrderResulted = foundItem.reduceQty(itemQty); //reduce item quantity 
+			boolean newOrderLine = foundItem.reduceQty(itemQty); //reduce item quantity 
 			
-			if (isNewOrderResulted) {
-				if (order == null) {
-					order = new Order();
+			if (newOrderLine) {
+				if (getOrder() == null) {
+					this.order = new Order();
 				}
-				order.addOrderLine(foundItem.getOrderLine());
+				getOrder().addOrderLine(foundItem.getOrderLine());
 			}
 		}
 		

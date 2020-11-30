@@ -14,6 +14,7 @@ public class ModelController implements Runnable {
 	
 	private Inventory inventory;
 	private CustomerList customerList;
+	private int currentOrderId;
 	
 	private DatabaseController dbControl;
 	private ServerController srvControl;
@@ -56,6 +57,12 @@ public class ModelController implements Runnable {
 	 * updates the inventory from db (sets)
 	 */
 	public void getNewInventory() {
+		
+		//Store latest order id
+		if (getInventory() != null) {
+			if (getInventory().getOrder() != null)
+				this.currentOrderId = getInventory().getOrder().getId();
+		}
 		
 		this.inventory = new Inventory();
 		
@@ -117,34 +124,24 @@ public class ModelController implements Runnable {
 			return;
 		}
 		
-		//now check ordertable to be associated with the inventory (only get the one for today)
+		//now check ordertable and get only the latest one back
 		for (int i = 0; i < ordersTable.length; i++) {
+			
 			
 			int orderId = Integer.parseInt(ordersTable[i][0]);
 			
-			try {
-				java.util.Date orderDate = new SimpleDateFormat("yyyy-MM-dd").parse(ordersTable[i][1]);
-
-				java.util.Date today = new java.util.Date();
-			    SimpleDateFormat sdformat = new SimpleDateFormat("yyyy-MM-dd");
-			    java.util.Date d1 = sdformat.parse(today.getYear() + "-" + today.getMonth() + "-" + today.getDay());
-
-				System.out.println("DB order date format (as string): " + ordersTable[i][1]);
-				System.out.println("Db order id " + orderId + " db order date " + orderDate);
-				System.out.println("Today is " + today);
-				
-				if (d1.compareTo(orderDate) == 0) {
-					
-					System.out.println("Today's order found in db");
-					
+			System.out.println("found!" + orderId);
+			if (currentOrderId == orderId) {
+				try {
+					java.util.Date orderDate = new SimpleDateFormat("yyyy-MM-dd").parse(ordersTable[i][1]);
 					java.sql.Date sqlDate = new java.sql.Date(orderDate.getTime());
 					
+					System.out.println("found2!" + orderId + " " + sqlDate);
 					this.inventory.setOrder(orderId, sqlDate);
-					return;
+					
+				} catch (ParseException e) {
+					e.printStackTrace();
 				}
-				
-			} catch (ParseException e) {
-				e.printStackTrace();
 			}
 		}
 	}
@@ -232,15 +229,7 @@ public class ModelController implements Runnable {
 	
 	public int updateCustomer(String[] customerInfo) {
 		
-		int id = Integer.parseInt(customerInfo[0]);
-		String cType = customerInfo[1];
-		String fName = customerInfo[2];
-		String lName = customerInfo[3];
-		String address = customerInfo[4];
-		String postalCode = customerInfo[5];
-		String phoneNo = customerInfo[6];
-		
-		int result = dbControl.updateCustomerRow(id, fName, lName, address, postalCode, phoneNo, cType);
+		int result = dbControl.updateCustomerRow(customerInfo);
 		getNewCustomerList(); //get updated customers list
 		return result;
 		
@@ -265,9 +254,11 @@ public class ModelController implements Runnable {
 			//update item on the db
 			if (inventory.getOrder() != null) {
 				
+				System.out.println("Order " + inventory.getOrder().getId());
 				String[] order = new String[2];
 				order[0] = Integer.toString(inventory.getOrder().getId());
 				order[1] = inventory.getOrder().getDate().toString();
+				this.currentOrderId = inventory.getOrder().getId();
 				getDb().addRow("ordertable", order);
 				
 				if (item.getOrderLine() != null) {
@@ -280,6 +271,8 @@ public class ModelController implements Runnable {
 					
 					getDb().addRow("orderlinetable", newRow);
 				}
+			} else {
+				System.out.println("Order not found");
 			}
 			
 		}

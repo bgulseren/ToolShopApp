@@ -11,20 +11,7 @@ public class InvViewController {
 	private InvViewListener il;
 	private MainController mc;
 	
-	private String id;
-	private String name;
-	
-	public InventoryView getIv() {
-		return iv;
-	}
-	
 	String[] columnNames = {"ID", "Name", "Quantity", "Price", "Type", "Power", "SupplierID"};
-	
-	// true = fail
-	// false = success
-	//private boolean error;
-	
-	//private String errorMessage;
 	
 	private String[][] searchResult;
 	
@@ -36,6 +23,10 @@ public class InvViewController {
 	
 	public void setMainController(MainController mc) {
 		this.mc = mc;
+	}
+	
+	public InventoryView getIv() {
+		return iv;
 	}
 	
 	public void searchTool(String searchKey, String request) {
@@ -73,22 +64,5 @@ public class InvViewController {
 		this.searchResult = searchResult;
 		iv.getResultsTable().setModel(new DefaultTableModel(getSearchResult(), columnNames));
 	}
-
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
 
 }

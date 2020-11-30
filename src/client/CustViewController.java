@@ -9,23 +9,9 @@ public class CustViewController {
 	private CustomerView cv;
 	private CustViewListener cl;
 	private MainController mc;
-		
-	private String id;
-	private String fName;
-	private String lName;
-	private String address;
-	private String postalCode;
-	private String phoneNo;
-	private String type;
 	
 	//For populating results table (JTable)
 	String[] columnNames = {"ID", "Type", "First Name", "Last Name", "Address", "Postal Code", "Phone #"};
-	
-	// true = fail
-	// false = success
-	private boolean error;
-	
-	private String errorMessage;
 
 	private String[][] searchResult;
 	
@@ -39,14 +25,26 @@ public class CustViewController {
 		this.mc = mc;
 	}
 	
+	/**
+	 * 
+	 * @return CustomerView
+	 */
 	public CustomerView getCv() {
 		return cv;
 	}
 	
+	/**
+	 * 
+	 * @return CustViewListener
+	 */
 	public CustViewListener getCl() {
 		return cl;
 	}
 
+	/**
+	 * Searches for customers
+	 * 
+	 */
 	public void searchCustomer(String searchKey, String request) {
 		if (request.contentEquals("BYID")) {
 			mc.searchCustomer(searchKey, 0);
@@ -57,22 +55,42 @@ public class CustViewController {
 		}
 	}
 	
+	/**
+	 * Adds customer
+	 * 
+	 */
 	public void addCustomer(String[] customerInfo) {
 		mc.addCustomer(customerInfo);
 	}
 	
+	/**
+	 * Edits customer
+	 * 
+	 */
 	public void editCustomer(String[] customerInfo) {
 		mc.editCustomerInfo(customerInfo);
 	}
 	
+	/**
+	 * Deletes customer
+	 * 
+	 */
 	public void deleteCustomer(String id) {
 		mc.deleteCustomer(id);
 	}
 	
+	/**
+	 * Returns search results array
+	 * 
+	 */
 	public String[][] getSearchResult(){
 		return searchResult;
 	}
 	
+	/**
+	 * Switches pages
+	 * 
+	 */
 	public void displayInvMgmtView() {
 		mc.activateInventoryView();
 	}
@@ -83,96 +101,6 @@ public class CustViewController {
 	public void updateView(String[][] searchResult) {
 		this.searchResult = searchResult;
 		cv.getResultsTable().setModel(new DefaultTableModel(getSearchResult(), columnNames));
-	}
-
-	
-	public String getId() {
-		return id;
-	}
-
-
-	public void setId(String id) {
-		this.id = id;
-	}
-
-
-	public String getfName() {
-		return fName;
-	}
-
-
-	public void setfName(String fName) {
-		this.fName = fName;
-	}
-
-
-	public String getlName() {
-		return lName;
-	}
-
-
-	public void setlName(String lName) {
-		this.lName = lName;
-	}
-
-
-	public String getAddress() {
-		return address;
-	}
-
-
-	public void setAddress(String address) {
-		this.address = address;
-	}
-
-
-	public String getPostalCode() {
-		return postalCode;
-	}
-
-
-	public void setPostalCode(String postalCode) {
-		this.postalCode = postalCode;
-	}
-
-
-	public String getPhoneNo() {
-		return phoneNo;
-	}
-
-
-	public void setPhoneNo(String phoneNo) {
-		this.phoneNo = phoneNo;
-	}
-
-
-	public String getType() {
-		return type;
-	}
-
-
-	public void setType(String type) {
-		this.type = type;
-	}
-
-
-	public boolean isError() {
-		return error;
-	}
-
-
-	public void setError(boolean error) {
-		this.error = error;
-	}
-
-
-	public String getErrorMessage() {
-		return errorMessage;
-	}
-
-
-	public void setErrorMessage(String errorMessage) {
-		this.errorMessage = errorMessage;
 	}
 		
 }

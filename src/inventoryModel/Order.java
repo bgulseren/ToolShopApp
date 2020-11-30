@@ -46,6 +46,7 @@ public class Order implements Serializable {
 	}
 	
 	public Order(int orderId, java.sql.Date orderDate) {
+		this.orderLines = new ArrayList<OrderLine>();
 		this.id = orderId;
 		this.date = orderDate;
 	}
