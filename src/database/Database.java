@@ -57,7 +57,6 @@ public class Database {
 			int rows = tools.getRow();
 			
 			if(rows == 0) {
-				System.err.println(tableName + " is empty");
 				return null;
 			}
 			
@@ -139,7 +138,6 @@ public class Database {
 			pStat.executeUpdate();
 		} catch(SQLException e) {
 			message = 1;
-			System.err.println("ERROR: cant find specified item");
 			return message;
 		}
 		return message;
@@ -170,7 +168,6 @@ public class Database {
 		
 		} catch(SQLException e) {
 			message = 1;
-			System.err.println("ERROR");
 			e.printStackTrace();
 		}
 		
@@ -202,7 +199,6 @@ public class Database {
 		
 		} catch(SQLException e) {
 			message = 1;
-			System.err.println("ERROR");
 			e.printStackTrace();
 		}
 		
@@ -236,7 +232,6 @@ public class Database {
 		
 		} catch(SQLException e) {
 			message = 1;
-			System.err.println("ERROR");
 			e.printStackTrace();
 		}
 		

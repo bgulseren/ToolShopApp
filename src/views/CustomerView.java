@@ -13,6 +13,8 @@ package views;
 import javax.swing.JFrame;
 //import java.awt.GridBagLayout;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 //import java.awt.GridBagConstraints;
 import java.awt.Font;
 import javax.swing.SwingConstants;
@@ -328,5 +330,10 @@ public class CustomerView {
 	
 	public JTextField getType() {
 		return typeField;
+	}
+	
+	public void displayMessage(String string) {
+		JOptionPane pane = new JOptionPane();
+		JOptionPane.showMessageDialog(pane, string);
 	}
 }

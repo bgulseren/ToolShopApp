@@ -29,6 +29,16 @@ public class MainController {
 		this.customerList = null;
 		this.CVC = CVC;
 		CVC.setMainController(this);
+		
+		//Get the models from server
+		try {
+			getClientController().getInventoryFromSrv();
+			getClientController().getCustomersFromSrv();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public InvViewController getIvc() {
@@ -162,10 +172,10 @@ public class MainController {
 	}
 	
 	public void printOrder() {
-		
-		File file = new File("orderSummary.txt");
         
 		if (inventory.getOrder() != null) {
+			
+			File file = new File("orderSummary.txt");
 	        String data = inventory.getOrder().toString();
 	        
 	        try(FileOutputStream fos = new FileOutputStream(file);
@@ -183,9 +193,7 @@ public class MainController {
 	        } catch (IOException e) {
 	            e.printStackTrace();
 	        }
-		} else {
-        	System.out.println("No active order to print!");
-        }
+		}
 	}
 	
 	//*****************Main*******************//

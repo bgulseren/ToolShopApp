@@ -61,14 +61,15 @@ public class ServerController {
 			} else {
 				cliSocket.close(); //todo: not sure about this
 				System.out.println("Server: a client socket is closed");
+				break;
 			}
 			
 			pool.execute(model);
 		}
 			
-		//pool.shutdown();
+		pool.shutdown();
 		
-		//System.out.println("Server: Server closed");
+		System.out.println("Server: Server closed");
 	}
 	
 	/**

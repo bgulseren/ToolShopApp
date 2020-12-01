@@ -130,13 +130,11 @@ public class ModelController implements Runnable {
 			
 			int orderId = Integer.parseInt(ordersTable[i][0]);
 			
-			System.out.println("found!" + orderId);
 			if (currentOrderId == orderId) {
 				try {
 					java.util.Date orderDate = new SimpleDateFormat("yyyy-MM-dd").parse(ordersTable[i][1]);
 					java.sql.Date sqlDate = new java.sql.Date(orderDate.getTime());
 					
-					System.out.println("found2!" + orderId + " " + sqlDate);
 					this.inventory.setOrder(orderId, sqlDate);
 					
 				} catch (ParseException e) {
@@ -254,7 +252,6 @@ public class ModelController implements Runnable {
 			//update item on the db
 			if (inventory.getOrder() != null) {
 				
-				System.out.println("Order " + inventory.getOrder().getId());
 				String[] order = new String[2];
 				order[0] = Integer.toString(inventory.getOrder().getId());
 				order[1] = inventory.getOrder().getDate().toString();
@@ -271,8 +268,6 @@ public class ModelController implements Runnable {
 					
 					getDb().addRow("orderlinetable", newRow);
 				}
-			} else {
-				System.out.println("Order not found");
 			}
 			
 		}

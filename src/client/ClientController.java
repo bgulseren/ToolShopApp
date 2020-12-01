@@ -90,30 +90,6 @@ public class ClientController {
 		readInventoryFromSrv();
 	}
 	
-	public void addItemFromSrv () throws ClassNotFoundException, IOException {
-		connect();
-		
-//		String itemType = mainCtr.getInvView().itemType;
-//		String itemName = mainCtr.getInvView().itemName;
-//		int itemId = mainCtr.getInvView().itemId;
-//		double itemPrice = mainCtr.getInvView().itemPrice;
-//		int itemQty = mainCtr.getInvView().itemQty;
-//		int itemSupplierId = mainCtr.getInvView().itemSupplierId;
-//		int itemPower = mainCtr.getInvView().itemPower;
-//		
-//		String messageOut = "ADDITEM" + "%" +
-//				itemId + "%" +
-//				itemName + "%" +
-//				itemQty + "%" +
-//				itemPrice + "%" +
-//				itemType + "%" +
-//				itemPower + "%" +
-//				itemSupplierId;
-
-//		socketOut.writeObject(messageOut);
-		readInventoryFromSrv();
-	}
-	
 	private void readInventoryFromSrv() throws ClassNotFoundException, IOException {
 		// receiving the new inventory model from server
         Inventory inv = (Inventory) socketIn.readObject();

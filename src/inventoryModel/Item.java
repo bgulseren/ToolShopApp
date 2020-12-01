@@ -195,7 +195,6 @@ public abstract class Item implements Serializable {
 		
 		if (this.qty < 40 && orderLine == null) {
 			//The default quantity ordered by each item = 50 – number of existing items
-			System.out.println("Generating order line for item id " + getId());
 			createOrderLine(50 - this.getQty());
 			return true;
 		}

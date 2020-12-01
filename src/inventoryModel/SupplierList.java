@@ -86,8 +86,6 @@ public class SupplierList implements Serializable {
 				sup = new InterntlSupplier(id, name, address, contact, tax);
 			}
 			this.suppliers.add(sup);
-		} else {
-			System.out.println("Supplier already exists, cannot add!");
 		}
 		
 	}

@@ -38,6 +38,7 @@ public class InvViewListener implements ActionListener{
 		}
 		else if(e.getSource() == iv.getDisplayOrderButton()) {
 			displayOrder();
+			iv.displayMessage("Your order was printed as txt file at the program root folder.");
 		}
 		else if(e.getSource() == iv.getCustMgmtButton()) {
 			displayCustMgmtView();
@@ -70,6 +71,8 @@ public class InvViewListener implements ActionListener{
 		if(row != -1) {
 			String selectedID = iv.getResultsTable().getModel().getValueAt(row,0).toString();
 			ivCtr.decreaseQuantity(selectedID);
+		} else {
+			iv.displayMessage("No row selected!");
 		}
 	}
 	

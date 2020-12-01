@@ -2,6 +2,8 @@ package views;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 import java.awt.Font;
 import javax.swing.SwingConstants;
 import javax.swing.JPanel;
@@ -165,5 +167,10 @@ public class InventoryView {
 	
 	public JRadioButton getSearchToolIdButton() {
 		return searchByToolIdButton;
+	}
+	
+	public void displayMessage(String string) {
+		JOptionPane pane = new JOptionPane();
+		JOptionPane.showMessageDialog(pane, string);
 	}
 }
