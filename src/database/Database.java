@@ -118,10 +118,7 @@ public class Database {
 			pStat.executeUpdate(sql);
 		}
 		catch(SQLException e){
-			// message 1 = duplicate value error
-			e.printStackTrace();
 			message = 1;
-			//System.err.println("ERROR: You are trying to enter a duplicate value");
 		}
 		return message;
 	}

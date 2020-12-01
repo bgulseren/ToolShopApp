@@ -18,6 +18,8 @@ public class Order implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 
+	private static int todayOrderId = 1001;
+	
 	/** the id number of the order */
 	private int id;
 	
@@ -36,7 +38,7 @@ public class Order implements Serializable {
 		this.orderLines = new ArrayList<OrderLine>();
 		
 		Random random = new Random();
-		this.id = random.nextInt(99999); //create a 5 digit random number
+		this.id = getTodaysOrderId();
 		
 		java.util.Date today = new java.util.Date();
 		java.sql.Date sqlDate = new java.sql.Date(today.getTime());
@@ -97,6 +99,10 @@ public class Order implements Serializable {
 	 */
 	public void clearOrderLines() {
 		this.orderLines = new ArrayList<OrderLine>();
+	}
+	
+	public static int getTodaysOrderId() {
+		return todayOrderId;
 	}
 
 
