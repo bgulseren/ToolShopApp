@@ -171,7 +171,7 @@ public class MainController {
 		getCvc().getCv().frame.setVisible(true);
 	}
 	
-	public void printOrder() {
+	public boolean printOrder() {
         
 		if (inventory.getOrder() != null) {
 			
@@ -190,10 +190,13 @@ public class MainController {
 	            fos.close();
 	            
 	            System.out.print("Order written to file successfully.");
+	            
+	            return true;
 	        } catch (IOException e) {
 	            e.printStackTrace();
 	        }
 		}
+		return false; //no order for today
 	}
 	
 	//*****************Main*******************//

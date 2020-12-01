@@ -37,7 +37,6 @@ public class Order implements Serializable {
 		
 		this.orderLines = new ArrayList<OrderLine>();
 		
-		Random random = new Random();
 		this.id = getTodaysOrderId();
 		
 		java.util.Date today = new java.util.Date();

@@ -46,7 +46,12 @@ public class InvViewController {
 	}
 	
 	public void displayOrder() {
-		mc.printOrder();
+		boolean result = mc.printOrder();
+		if (result) {
+			iv.displayMessage("Your order was printed as txt file at the program root folder.");
+		} else {
+			iv.displayMessage("There is no active orders for today.");
+		}
 	}
 	
 	public String[][] getSearchResult(){
